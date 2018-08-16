@@ -60,8 +60,8 @@ class GoogleViewController: ASViewController<ASTableNode> {
 
     func fetchNewBatchWidthContext(_ context: ASBatchContext?) {
         GoogleApiAdap.request(target: .everything(query: nil,
-                                                  sources: nil,
-                                                  domains: "cnn.com, usatoday.com, nytimes.com",
+                                                  sources: [.cnn, .abc_news, .the_new_york_times],
+                                                  domains: nil,
                                                   from: nil, to: nil,
                                                   language: "en", sortBy: nil,
                                                   pageSize: 100,

@@ -10,10 +10,10 @@ import Foundation
 
 
 class UnboxDateFormater {
-    public static func date(format: String = "yyyy-mm-dd'T'H:m:s'Z'") -> DateFormatter {
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-        dateFormatter.dateFormat = format
-        return dateFormatter
+    public static func date(format: String = "yyyy-MM-dd'T'HH:mm:ssZZZZZ") -> DateFormatter {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = format
+        return formatter
     }
 }

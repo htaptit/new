@@ -10,7 +10,7 @@ import Moya
 
 enum GoogleApi {
     case top_headlines(country: String?, page: Int?, page_size: Int?)
-    case everything(query: String?, sources: String?, domains: String?, from: String?, to: String?, language: String?, sortBy: String?, pageSize: Int?, page: Int?)
+    case everything(query: String?, sources: [NewsSource]?, domains: [NewsSource]?, from: String?, to: String?, language: String?, sortBy: String?, pageSize: Int?, page: Int?)
 }
 
 extension GoogleApi : TargetType {
@@ -52,8 +52,8 @@ extension GoogleApi : TargetType {
             
         case .everything(let query, let sources, let domains, let from, let to, let language, let sortBy, let pageSize, let page) :
             if let _ = query { params["q"] = query! }
-            if let _ = sources { params["sources"] = sources! }
-            if let _ = domains { params["domains"] = domains! }
+            if let _ = sources { params["sources"] = sources!.compactMap( { $0.string } ).joined(separator: ",") }
+            if let _ = domains { params["domains"] = domains!.compactMap( { $0.shortDomain } ).joined(separator: ",") }
             if let _ = from { params["from"] = from! }
             if let _ = to { params["to"] = to! }
             if let _ = language { params["language"] = language! }

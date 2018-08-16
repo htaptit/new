@@ -10,6 +10,7 @@ import Foundation
 import Unbox
 
 struct Article {
+    let sourceid: String
     let sourcename: String
     let author: String?
     let title: String?
@@ -21,6 +22,7 @@ struct Article {
 
 extension Article: Unboxable {
     init(unboxer: Unboxer) throws {
+        self.sourceid = try unboxer.unbox(keyPath: "source.id")
         self.sourcename = try unboxer.unbox(keyPath: "source.name")
         self.author = try? unboxer.unbox(keyPath: "author")
         self.title = try? unboxer.unbox(keyPath: "title")
