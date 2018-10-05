@@ -18,18 +18,20 @@ struct Article {
     let url: URL?
     let urlToImage: URL?
     let publishedAt: Date?
+    let content: String?
 }
 
 extension Article: Unboxable {
     init(unboxer: Unboxer) throws {
-        self.sourceid = try unboxer.unbox(keyPath: "source.id")
-        self.sourcename = try unboxer.unbox(keyPath: "source.name")
+        self.sourceid = try unboxer.unbox(keyPath: "sid")
+        self.sourcename = try unboxer.unbox(keyPath: "sname")
         self.author = try? unboxer.unbox(keyPath: "author")
         self.title = try? unboxer.unbox(keyPath: "title")
         self.description = try? unboxer.unbox(keyPath: "description")
         self.url = try? unboxer.unbox(keyPath: "url")
         self.urlToImage = try? unboxer.unbox(keyPath: "urlToImage")
         self.publishedAt = try? unboxer.unbox(keyPath: "publishedAt", formatter: UnboxDateFormater.date())
+        self.content = try? unboxer.unbox(keyPath: "content")
     }
 }
 

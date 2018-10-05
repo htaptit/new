@@ -10,25 +10,25 @@ import Foundation
 import Moya
 
 enum ArticleExtraction {
-    case article(urlStr: String)
+    case parser(urlStr: String)
 }
 
 extension ArticleExtraction: TargetType {
     var baseURL: URL  {
-        guard let url = URL(string: "https://api.diffbot.com/v3") else { fatalError("baseURL could not be configured.") }
+        guard let url = URL(string: "https://mercury.postlight.com") else { fatalError("baseURL could not be configured.") }
         return url
     }
     
     var path: String {
         switch self {
-        case .article:
-            return "/article"
+        case .parser:
+            return "/parser"
         }
     }
     
     var method: Moya.Method {
         switch self {
-        case .article :
+        case .parser :
             return .get
         }
     }
@@ -36,9 +36,8 @@ extension ArticleExtraction: TargetType {
     var parameters: [String: Any]? {
         var params = [String: Any]()
         switch self {
-        case .article(let urlStr):
+        case .parser(let urlStr):
             params["url"] = urlStr
-            params["token"] = "e9a7c90b3b0725d396b868cfd1f3151a"
             return params
         }
     }
@@ -48,8 +47,7 @@ extension ArticleExtraction: TargetType {
     }
     
     var headers: [String : String]? {
-//        return ["X-Api-Key" : "2c297d7fb6b940ff9eb0e53651ad8997"]
-        return nil
+        return ["X-Api-Key" : "tQ0zdAMhOVvgTpjIrTwgFzd3AdvbderHUEg1EhcS"]
     }
     
     var sampleData: Data {
@@ -58,7 +56,7 @@ extension ArticleExtraction: TargetType {
     
     var task: Task {
         switch self {
-        case .article:
+        case .parser:
             if let _ = self.parameters {
                 return .requestParameters(parameters: self.parameters!, encoding: parameterEncoding)
             }

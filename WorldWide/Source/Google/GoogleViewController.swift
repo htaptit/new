@@ -6,7 +6,6 @@
 //  Copyright © 2018 Hoang Trong Anh. All rights reserved.
 //
 
-import ViewAnimator
 import AsyncDisplayKit
 import Unbox
 
@@ -32,10 +31,7 @@ class GoogleViewController: ASViewController<ASTableNode> {
         node.dataSource = self
         node.delegate = self
         node.leadingScreensForBatching = 2.5
-        node.view.separatorStyle = .none
-        node.view.tableFooterView = nil
-        node.view.tableHeaderView = nil
-  
+        
         self.refreshControl.tintColor = UIColor.red
         self.refreshControl.attributedTitle = NSAttributedString(string: "Fetching New Articles ...")
         self.refreshControl.addTarget(self, action: #selector(self.refreshWeatherData(_:)), for: UIControlEvents.valueChanged)
@@ -51,6 +47,7 @@ class GoogleViewController: ASViewController<ASTableNode> {
     override func viewWillAppear(_ animated: Bool) {
         self.tabBarController?.tabBar.isTranslucent = false
         self.navigationController?.isToolbarHidden = true
+        self.navigationController?.hidesBarsOnSwipe = true
     }
     
     override func didReceiveMemoryWarning() {
@@ -82,7 +79,7 @@ class GoogleViewController: ASViewController<ASTableNode> {
                                                                 self.topHeadLines = top
                                                                 self.refreshControl.endRefreshing()
                                                             }
-                                                            self.addRowsIntoTableNode(newTopCount:  top.articles.count)
+                                                            self.addRowsIntoTableNode(newTopCount: top.articles.count)
                                                         } catch {
                                                             debugPrint("parse json error ! ")
                                                         }
@@ -115,6 +112,10 @@ class GoogleViewController: ASViewController<ASTableNode> {
 }
 
 extension GoogleViewController: ASTableDataSource, ASTableDelegate {
+    func numberOfSections(in tableNode: ASTableNode) -> Int {
+        return 1
+    }
+    
     func tableNode(_ tableNode: ASTableNode, numberOfRowsInSection section: Int) -> Int {
         if let articles = self.topHeadLines?.articles {
             return articles.count
@@ -134,8 +135,11 @@ extension GoogleViewController: ASTableDataSource, ASTableDelegate {
     
     func tableNode(_ tableNode: ASTableNode, didSelectRowAt indexPath: IndexPath) {
         if let articles = self.topHeadLines?.articles {
-            let vc = DetailWebViewController(url: articles[indexPath.row].url?.absoluteString)
-            self.navigationController?.pushViewController(vc, animated: true)
+            let vc = WebViewController(url: articles[indexPath.row].url)
+            vc.view.backgroundColor = UIColor.black.withAlphaComponent(0.0)
+            vc.modalPresentationStyle = UIModalPresentationStyle.overFullScreen
+            vc.ww_dissmiss = self
+            self.present(vc, animated: true, completion: nil)
         }
     }
     
@@ -146,6 +150,14 @@ extension GoogleViewController: ASTableDataSource, ASTableDelegate {
     func tableNode(_ tableNode: ASTableNode, willBeginBatchFetchWith context: ASBatchContext) {
         self.fetchNewBatchWidthContext(context)
     }
-    
-    
+}
+
+extension GoogleViewController: HandleDissmiss {
+    func didDissmiss() {
+        // mark code
+    }
+}
+
+protocol HandleDissmiss: class {
+    func didDissmiss()
 }

@@ -17,20 +17,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        
-        let vc = UINavigationController(rootViewController: GoogleViewController())
-        vc.tabBarItem.title = "News"
-        vc.tabBarItem.image = #imageLiteral(resourceName: "icn_tabbar_news")
-        
-        let tabBarControoler = UITabBarController()
-        tabBarControoler.viewControllers = [vc]
-        tabBarControoler.selectedIndex = 0
-        tabBarControoler.tabBar.tintColor = .red
-//        UINavigationBar.appearance().frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 10.0)
+        UIApplication.shared.statusBarView?.backgroundColor = UIColor.white
+        UINavigationBar.appearance().barTintColor = UIColor.white
+        UINavigationBar.appearance().tintColor = UIColor.white
+        UINavigationBar.appearance().backgroundColor = UIColor.white
         
         window = UIWindow()
-        window?.backgroundColor = .white
-        window?.rootViewController = tabBarControoler
+        window?.rootViewController = RootTabBarController()
         window?.makeKeyAndVisible()
         return true
     }

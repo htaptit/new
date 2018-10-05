@@ -14,14 +14,14 @@ enum GoogleApi {
 }
 
 extension GoogleApi : TargetType {
-    var baseURL: URL  { return URL(string: "https://newsapi.org")! }
+    var baseURL: URL  { return URL(string: "http://192.168.0.252:3000/api")! }
     
     var path: String {
         switch self {
         case .top_headlines:
-            return "/v2/top-headlines"
+            return "/v1/top-headlines"
         case .everything:
-            return "/v2/everything"
+            return "/ggarticles/v1/everything"
         }
     }
     
@@ -69,7 +69,8 @@ extension GoogleApi : TargetType {
     }
 
     var headers: [String : String]? {
-        return ["X-Api-Key" : "2c297d7fb6b940ff9eb0e53651ad8997"]
+//        return ["X-Api-Key" : "2c297d7fb6b940ff9eb0e53651ad8997"]
+        return nil
     }
     
     var sampleData: Data {

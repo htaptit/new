@@ -14,17 +14,20 @@ class Google: ASCellNode {
     private let imageNode: ASNetworkImageNode = {
         let node = ASNetworkImageNode()
         node.image = #imageLiteral(resourceName: "no_image")
-        node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width, height: 200.0)
+        node.style.preferredSize = CGSize(width: 80.0, height: 80.0)
         node.contentMode = .scaleAspectFill
+        node.cornerRadius = 5.0
         return node
     }()
     
     private let favoriteImageNode: ASNetworkImageNode = {
         let node = ASNetworkImageNode()
-        node.style.preferredSize = CGSize(width: 35, height: 35)
+        node.style.preferredSize = CGSize(width: 25, height: 15)
         node.image = #imageLiteral(resourceName: "no_image")
         node.contentMode = .scaleAspectFill
-        node.cornerRadius = 35.0 / 2
+        node.borderWidth = 0.2
+        node.borderColor = UIColor.gray.cgColor
+        node.cornerRadius = 3.0
         
         return node
     }()
@@ -61,26 +64,29 @@ class Google: ASCellNode {
         let authText = NSAttributedString(string: article.author ?? article.sourcename, attributes: [NSAttributedStringKey.foregroundColor : UIColor.darkGray, NSAttributedStringKey.font: UIFont.systemFont(ofSize: 9)])
         self.auth.attributedText = authText
         
-        
         self.created_at = ASTextNode()
-        
         if let publishedAt = article.publishedAt {
             let createdAtText = NSAttributedString(string: UnboxDateFormater.date(format: "MMM dd, H:m").string(from: publishedAt), attributes: [NSAttributedStringKey.foregroundColor : UIColor.darkGray, NSAttributedStringKey.font: UIFont.systemFont(ofSize: 9)])
             self.created_at.attributedText = createdAtText
         }
         
         super.init()
-        
+        self.selectionStyle = .none
         self.automaticallyManagesSubnodes = true
     }
     
     // MARK: - Layout
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
-        let imageNodeStack = ASStackLayoutSpec(direction: .vertical, spacing: 2.0, justifyContent: .start, alignItems: .center, children: [self.imageNode])
-        let insetImageNodeStack = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)
+        let imageNodeStack = ASStackLayoutSpec(direction: .horizontal, spacing: 2.0, justifyContent: .start, alignItems: .end, children: [self.imageNode])
+        let centerTT = ASCenterLayoutSpec(centeringOptions: .Y, sizingOptions: [], child: imageNodeStack)
         
-        let titlesStack = ASStackLayoutSpec(direction: .vertical, spacing: 2.0, justifyContent: .end, alignItems: .start, children: [self.titleNode, self.subtitleNode])
+        let insetImageNodeStack = UIEdgeInsets(top: 2.0, left: 5.0, bottom: 2.0, right: 5.0)
+        
+        let titlesStack = ASStackLayoutSpec(direction: .vertical, spacing: 2.0, justifyContent: .start, alignItems: .stretch, children: [self.titleNode, self.subtitleNode])
+        titlesStack.style.flexGrow = 1
+        titlesStack.style.flexShrink = 1
+        let topStack = ASStackLayoutSpec(direction: .horizontal, spacing: 5.0, justifyContent: .spaceBetween, alignItems: .stretch, children: [titlesStack, centerTT])
         
         let favoriteImageStack = ASStackLayoutSpec(direction: .horizontal, spacing: 2.0, justifyContent: .start, alignItems: .end, children: [self.favoriteImageNode])
         
@@ -99,9 +105,9 @@ class Google: ASCellNode {
         parentVertical.justifyContent = .spaceAround
         parentVertical.alignItems = .stretch
         
-        parentVertical.children = [ASInsetLayoutSpec(insets: insetImageNodeStack, child: imageNodeStack),
-                                   ASInsetLayoutSpec(insets: UIEdgeInsets(top: 5.0, left: 5.0, bottom: 10.0, right: 5.0), child: titlesStack),
-                                   ASInsetLayoutSpec(insets: UIEdgeInsets(top: 5.0, left: 5.0, bottom: 10.0, right: 5.0), child: parentInfoStack)]
+        parentVertical.children = [ASInsetLayoutSpec(insets: insetImageNodeStack, child: topStack),
+//                                   ASInsetLayoutSpec(insets: UIEdgeInsets(top: 5.0, left: 5.0, bottom: 10.0, right: 5.0), child: titlesStack),
+                                   ASInsetLayoutSpec(insets: UIEdgeInsets(top: 5.0, left: 5.0, bottom: 5.0, right: 5.0), child: parentInfoStack)]
         
         return ASInsetLayoutSpec(insets: insetImageNodeStack, child: parentVertical)
     }

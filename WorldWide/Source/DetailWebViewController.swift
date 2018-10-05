@@ -67,6 +67,7 @@ class DetailWebViewController: ASViewController<ASDisplayNode> {
         //add webview
         webView = WKWebView()
         webView.navigationDelegate = self
+        
         view = webView
         
         //add progresbar to navigation bar
@@ -90,8 +91,40 @@ class DetailWebViewController: ASViewController<ASDisplayNode> {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let urlString = self.url, let url = URL(string: urlString) {
-            webView.load(URLRequest(url: url))
+        if let urlString = self.url {
+            print(urlString)
+            if urlString.contains("video") {
+                self.webView.load(URLRequest(url: URL(string: urlString)!))
+            } else {
+                ArticleExtractionAdap.request(target: ArticleExtraction.parser(urlStr: urlString), success: { (response) in
+                    do {
+                        let extract: Extract = try unbox(data: response.data)
+                        
+                        let fullHTML = "<!DOCTYPE html>" +
+                            "<html lang=\"en\">" +
+                            "<head>" +
+                            "<meta charset=\"UTF-8\">" +
+                            "<style type=\"text/css\">" +
+                            "html {margin: 50px;padding:0;}" +
+                            "body { margin: 0; padding: 0; color: #363636; font-size: 150%;line-height: 1.6;text-align: justify; text-justify: inter-word; }" +
+                            "img {margin-left: auto;margin-right: auto;display: block;max-width: 100%;max-height: 100%;}" +
+                            "figure {margin: unset;}" +
+                            "</style>" +
+                            "</head>" +
+                        "<body> \(extract.content ?? "") </body></html>"
+                        
+                        self.webView.loadHTMLString(fullHTML, baseURL: nil)
+                    } catch {
+                        debugPrint("Parse Error !");
+                    }
+                }, error: { (error) in
+                    print(error)
+                }) { (fail) in
+                    print(fail)
+                }
+            }
+            
+            
             webView.allowsBackForwardNavigationGestures = true
         }
         
