@@ -1,14 +1,15 @@
 //
-//  Google.swift
+//  HistoryNode.swift
 //  WorldWide
 //
-//  Created by Hoang Trong Anh on 3/15/18.
+//  Created by Hoang Trong Anh on 10/8/18.
 //  Copyright © 2018 Hoang Trong Anh. All rights reserved.
 //
+
 import Foundation
 import AsyncDisplayKit
 
-class Google: ASCellNode {
+class HistoryNode: ASCellNode {
     // MARK: - Variables
     
     private let imageNode: ASNetworkImageNode = {
@@ -45,7 +46,7 @@ class Google: ASCellNode {
     
     // MARK: - Object life cycle
     
-    init(article: Article) {
+    init(article: GArticle) {
         self.imageNode.url = article.urlToImage
         
         if let source = NewsSource(rawValue: article.sourceid.replacingOccurrences(of: "-", with: "_")) {
@@ -106,10 +107,11 @@ class Google: ASCellNode {
         parentVertical.alignItems = .stretch
         
         parentVertical.children = [ASInsetLayoutSpec(insets: insetImageNodeStack, child: topStack),
-//                                   ASInsetLayoutSpec(insets: UIEdgeInsets(top: 5.0, left: 5.0, bottom: 10.0, right: 5.0), child: titlesStack),
-                                   ASInsetLayoutSpec(insets: UIEdgeInsets(top: 5.0, left: 5.0, bottom: 5.0, right: 5.0), child: parentInfoStack)]
+                                   //                                   ASInsetLayoutSpec(insets: UIEdgeInsets(top: 5.0, left: 5.0, bottom: 10.0, right: 5.0), child: titlesStack),
+            ASInsetLayoutSpec(insets: UIEdgeInsets(top: 5.0, left: 5.0, bottom: 5.0, right: 5.0), child: parentInfoStack)]
         
         return ASInsetLayoutSpec(insets: insetImageNodeStack, child: parentVertical)
     }
-
+    
 }
+

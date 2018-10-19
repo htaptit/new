@@ -21,9 +21,17 @@ class RootTabBarController: ASTabBarController {
     }()
     
     private var newTab: ASNavigationController = {
-        let tab = ASNavigationController(rootViewController: NewViewController())
+        let tab = ASNavigationController(rootViewController: SearchViewController())
         tab.tabBarItem.title = nil
-        tab.tabBarItem.image = #imageLiteral(resourceName: "icn_tabbar_news")
+        tab.tabBarItem.image = #imageLiteral(resourceName: "icn_tabbar_sources")
+        tab.tabBarItem.imageInsets = UIEdgeInsets(top: 6, left: 0, bottom: -6, right: 0)
+        return tab
+    }()
+    
+    private var sourceTab: ASNavigationController = {
+        let tab = ASNavigationController(rootViewController: SourcesViewController())
+        tab.tabBarItem.title = nil
+        tab.tabBarItem.image = #imageLiteral(resourceName: "icn_tabbar_search")
         tab.tabBarItem.imageInsets = UIEdgeInsets(top: 6, left: 0, bottom: -6, right: 0)
         return tab
     }()
@@ -32,7 +40,7 @@ class RootTabBarController: ASTabBarController {
     init() {
         super.init(nibName: nil, bundle: nil)
         
-        self.viewControllers = [self.googleTab, self.newTab]
+        self.viewControllers = [self.googleTab, self.newTab, self.sourceTab]
         self.selectedIndex = 0
         self.tabBar.tintColor = UIColor.red
     }

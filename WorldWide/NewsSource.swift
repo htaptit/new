@@ -8,11 +8,16 @@
 
 import Foundation
 
-enum NewsSource: String {
+enum NewsSource: String, EnumCollection, CaseCountable {
+    static var caseCount: Int = 0
+    
     case cnn
     case abc_news
     case the_new_york_times
     case usa_today
+    case google_news
+    
+    
     
     var string: String {
         switch self {
@@ -24,6 +29,8 @@ enum NewsSource: String {
             return "the-new-york-times"
         case .usa_today:
             return "usa-today"
+        case .google_news:
+            return "google-news"
         }
     }
     
@@ -37,6 +44,8 @@ enum NewsSource: String {
             return "nytimes.com"
         case .usa_today:
             return "usatoday.com"
+        case .google_news:
+            return "news.google.com"
         }
     }
     
@@ -44,14 +53,15 @@ enum NewsSource: String {
         switch self {
         case .cnn,
              .the_new_york_times,
-             .usa_today:
+             .usa_today,
+             .google_news:
             return "https://www.\(source.shortDomain)"
         case .abc_news:
             return "http://www.\(source.shortDomain)"
         }
     }
     
-    func getFavoriteIconOfDomain(source: NewsSource) -> String {
-        return "https://icon-locator.herokuapp.com/icon?url=\(fullDomain(source: source))&size=70..120..200"
+    func getFavoriteIconOfDomain() -> String {
+        return "https://icon-locator.herokuapp.com/icon?url=\(fullDomain(source: self))&size=70..120..200"
     }
 }
