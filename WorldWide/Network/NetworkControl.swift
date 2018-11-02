@@ -7,17 +7,20 @@
 //
 import Foundation
 import Moya
+//import Alamofire
 
-enum GoogleApi {
+enum WWAPI {
     // newsapi
     case top_headlines(query: String?, sources: [NewsSource]?, domains: [NewsSource]?, from: String?, to: String?, language: String?, sortBy: String?, pageSize: Int?, page: Int?)
     
     // mineapi
     case everything(query: String?, sources: [NewsSource]?, domains: [NewsSource]?, from: String?, to: String?, language: String?, sortBy: String?, pageSize: Int?, page: Int?)
     case get_asources()
+    case signin(username: String, passwd: String)
+    case earticles(sids: [Int], offset: Int)
 }
 
-extension GoogleApi : TargetType {
+extension WWAPI : TargetType {
     var baseURL: URL  {
         switch self {
         case .top_headlines:
@@ -43,6 +46,12 @@ extension GoogleApi : TargetType {
             return "/ggarticles/v1/everything"
         case .get_asources:
             return "/asources"
+            
+        // 30/10/2018
+        case .signin:
+            return "/accounts/login"
+        case .earticles:
+            return "/earticles"
         }
     }
     
@@ -50,8 +59,12 @@ extension GoogleApi : TargetType {
         switch self {
         case .top_headlines,
              .everything,
-             .get_asources:
+             .get_asources,
+             .earticles:
             return .get
+            
+        case .signin:
+            return .post
         }
     }
     
@@ -83,13 +96,34 @@ extension GoogleApi : TargetType {
             return params
         case .get_asources:
             return nil
+            
+            
+        case .signin(let username, let passwd):
+            params["username"] = username
+            params["password"] = passwd
+            return params
+        case .earticles(let sids, let offset):
+            if sids.count > 1 {
+                var ors: [[String: Int]] = Array(repeating: [:], count: sids.count)
+                
+                for (key, sid) in sids.enumerated() {
+                    ors[key] = ["sourcesId" : sid]
+                }
+                params["filter"] = ["where": ["or": ors], "offset": offset]
+            } else {
+                if let sid = sids.first {
+                    params["filter"] = ["where": ["sourcesId": sid]]
+                }
+            }
+            
+            return params
         }
     }
     
     var parameterEncoding:ParameterEncoding {
-        return URLEncoding.default
+        return CompositeEncoding.default
     }
-
+    
     var headers: [String : String]? {
         switch self {
         case .top_headlines:
@@ -97,7 +131,7 @@ extension GoogleApi : TargetType {
             // account: hoang.tronganh@icloud.com
             return ["X-Api-Key" : "2c297d7fb6b940ff9eb0e53651ad8997"]
         default:
-            return nil
+            return ["Authorization": UserCurrent.getToken.token ?? ""]
         }
     }
     
@@ -109,7 +143,9 @@ extension GoogleApi : TargetType {
         switch self {
         case .top_headlines,
              .everything,
-             .get_asources:
+             .get_asources,
+             .signin,
+             .earticles:
             if let _ = self.parameters {
                 return .requestParameters(parameters: self.parameters!, encoding: parameterEncoding)
             }
@@ -119,25 +155,8 @@ extension GoogleApi : TargetType {
     }
 }
 
-struct GoogleApiAdap {
-    
-    static let provider = MoyaProvider<GoogleApi>()
-    
-    static func request(target: GoogleApi, success successCallback: @escaping (Response) -> Void, error errorCallback: @escaping (Swift.Error) -> Void, failure failureCallback: @escaping (MoyaError) -> Void) {
-        provider.request(target) { (result) in
-            switch result {
-            case .success(let response):
-                if response.statusCode >= 200 && response.statusCode <= 300 {
-                    successCallback(response)
-                } else {
-                    let error = NSError(domain: target.baseURL.absoluteString, code: 0, userInfo: [NSLocalizedDescriptionKey: "### Code : \(response.statusCode), description: \(response.description) ###"])
-                    errorCallback(error)
-                }
-            case .failure(let error):
-                failureCallback(error)
-            }
-        }
-    }
+struct WWAPIAdap {
+    static let shared = MoyaProvider<WWAPI>()
 }
 
 

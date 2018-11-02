@@ -25,6 +25,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow()
         window?.rootViewController = RootTabBarController()
         window?.makeKeyAndVisible()
+        
+        debugPrint(UserCurrent.getToken)
+        
         return true
     }
 

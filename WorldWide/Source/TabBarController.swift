@@ -36,11 +36,19 @@ class RootTabBarController: ASTabBarController {
         return tab
     }()
     
+    private var userTab: ASNavigationController = {
+        let tab = ASNavigationController(rootViewController: LoginViewController())
+        tab.tabBarItem.title = nil
+        tab.tabBarItem.image = #imageLiteral(resourceName: "icn_tabbar_search")
+        tab.tabBarItem.imageInsets = UIEdgeInsets(top: 6, left: 0, bottom: -6, right: 0)
+        return tab
+    }()
+    
     
     init() {
         super.init(nibName: nil, bundle: nil)
         
-        self.viewControllers = [self.googleTab, self.newTab, self.sourceTab]
+        self.viewControllers = [self.googleTab, self.newTab, self.sourceTab, self.userTab]
         self.selectedIndex = 0
         self.tabBar.tintColor = UIColor.red
     }

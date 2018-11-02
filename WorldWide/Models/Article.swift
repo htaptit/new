@@ -6,32 +6,36 @@
 //  Copyright © 2018 Hoang Trong Anh. All rights reserved.
 //
 
-import Foundation
-import Unbox
+import ObjectMapper
 
-struct Article {
-    let sourceid: String
-    let sourcename: String
-    let author: String?
-    let title: String?
-    let description: String?
-    let url: URL?
-    let urlToImage: URL?
-    let publishedAt: Date?
-    let content: String?
-}
-
-extension Article: Unboxable {
-    init(unboxer: Unboxer) throws {
-        self.sourceid = try unboxer.unbox(keyPath: "sid")
-        self.sourcename = try unboxer.unbox(keyPath: "sname")
-        self.author = try? unboxer.unbox(keyPath: "author")
-        self.title = try? unboxer.unbox(keyPath: "title")
-        self.description = try? unboxer.unbox(keyPath: "description")
-        self.url = try? unboxer.unbox(keyPath: "url")
-        self.urlToImage = try? unboxer.unbox(keyPath: "urlToImage")
-        self.publishedAt = try? unboxer.unbox(keyPath: "publishedAt", formatter: UnboxDateFormater.date())
-        self.content = try? unboxer.unbox(keyPath: "content")
+class Article: Mappable {
+    var sourceid: String!
+    var sourcename: String!
+    var author: String?
+    var title: String?
+    var description: String?
+    var url: URL?
+    var urlToImage: URL?
+    var fav_icon_url: URL?
+    var publishedAt: Date?
+    var content: String?
+    
+    required init?(map: Map) {
+        
+    }
+    
+    // Mappable
+    func mapping(map: Map) {
+        sourceid <- map["sources.sid"]
+        sourcename <- map["sources.sname"]
+        author <- map["author"]
+        title <- map["title"]
+        description <- map["description"]
+        url <- (map["url"], URLTransform())
+        urlToImage <- (map["urlToImage"], URLTransform())
+        fav_icon_url <- (map["sources.fav_icon_url"], URLTransform())
+        publishedAt <- (map["publishedAt"], DateTransform())
+        content <- map["content"]
     }
 }
 

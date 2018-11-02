@@ -7,14 +7,15 @@
 //
 
 import AsyncDisplayKit
-import Unbox
+import RxSwift
 
 class GoogleViewController: ASViewController<ASTableNode> {
     
     private let refreshControl = UIRefreshControl()
+    private var bag = DisposeBag()
     
     var topHeadLines: Tops?
-    var page: Int = 1
+    var page: Int = 0
     
     init() {
         super.init(node: ASTableNode())
@@ -54,52 +55,21 @@ class GoogleViewController: ASViewController<ASTableNode> {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+    
     func fetchNewBatchWidthContext(_ context: ASBatchContext?) {
-        GoogleApiAdap.request(target: .everything(query: nil,
-                                                  sources: [.cnn, .abc_news, .the_new_york_times],
-                                                  domains: nil,
-                                                  from: nil, to: nil,
-                                                  language: "en", sortBy: nil,
-                                                  pageSize: 100,
-                                                  page: self.page), success: { (res) in
-                                                    DispatchQueue.main.async {
-                                                        do {
-                                                            let top: Tops = try unbox(data: res.data)
-                                                            
-                                                            if context == nil && self.refreshControl.isRefreshing {
-                                                                self.topHeadLines = nil
-                                                                self.node.reloadData()
-                                                            }
-                                                            
-                                                            if let _ = self.topHeadLines {
-                                                                self.topHeadLines!.append(unboxable_objec: top)
-                                                            } else {
-                                                                
-                                                                self.topHeadLines = top
-                                                                self.refreshControl.endRefreshing()
-                                                            }
-                                                            self.addRowsIntoTableNode(newTopCount: top.articles.count)
-                                                        } catch {
-                                                            debugPrint("parse json error ! ")
-                                                        }
-                                                    }
-                                                    self.page += 1
-                                                    context?.completeBatchFetching(true)
-                                                    
-        }, error: { (error) in
-            debugPrint(error.localizedDescription)
-            DispatchQueue.main.async {
-                self.refreshControl.endRefreshing()
-            }
-            if let _ = context { context!.completeBatchFetching(true) }
-        }) { (moya) in
-            debugPrint(moya)
-            DispatchQueue.main.async {
-                self.refreshControl.endRefreshing()
-            }
-            if let _ = context { context!.completeBatchFetching(true) }
-        }
+        WWService.getEArticles(sids: [1,2,3], offset: self.page)
+            .distinctUntilChanged({ $0 === $1 })
+            .subscribe(onNext: { (tops) in
+                self.topHeadLines = tops
+                self.addRowsIntoTableNode(newTopCount: tops.articles.count)
+            }, onError: { (error) in
+                context?.completeBatchFetching(true)
+            }, onCompleted: {
+                context?.completeBatchFetching(true)
+                self.page = self.page + 1
+            }) {
+                context?.completeBatchFetching(true)
+        }.disposed(by: bag)
     }
     
     func addRowsIntoTableNode(newTopCount newTops: Int) {
@@ -128,7 +98,7 @@ extension GoogleViewController: ASTableDataSource, ASTableDelegate {
         let nodeBlock: ASCellNodeBlock = {
             return Google(article: article)
         }
-        
+
         return nodeBlock
         
     }

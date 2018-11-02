@@ -6,23 +6,17 @@
 //  Copyright © 2018 Hoang Trong Anh. All rights reserved.
 //
 
-import Foundation
-import Unbox
+import ObjectMapper
 
-struct Tops {
-    var articles: [Article]
-}
-
-extension Tops: Unboxable {
-    init(unboxer: Unboxer) throws {
-        self.articles = try unboxer.unbox(key: "articles")
+class Tops: Mappable {
+    var articles: [Article]!
+    
+    required init?(map: Map) {
+        
     }
     
-    mutating func append(unboxable_objec: Unboxable) {
-        if (type(of: unboxable_objec) == Tops.self) {
-            let s = unboxable_objec as! Tops
-            
-            self.articles.append(contentsOf: s.articles)
-        }
+    // Mappable
+    func mapping(map: Map) {
+        self.articles <- map["articles"]
     }
 }

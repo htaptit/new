@@ -7,22 +7,17 @@
 //
 
 import Foundation
-import Unbox
+import ObjectMapper
 
-struct GArticles {
-    var articles: [GArticle]
-}
-
-extension GArticles: Unboxable {
-    init(unboxer: Unboxer) throws {
-        self.articles = try unboxer.unbox(key: "articles")
+class GArticles: Mappable {
+    var articles: [GArticle]?
+    
+    required init?(map: Map) {
+        
     }
     
-    mutating func append(unboxable_objec: Unboxable) {
-        if (type(of: unboxable_objec) == GArticles.self) {
-            let s = unboxable_objec as! GArticles
-            
-            self.articles.append(contentsOf: s.articles)
-        }
+    // Mappable
+    func mapping(map: Map) {
+        articles <- map["articles"]
     }
 }

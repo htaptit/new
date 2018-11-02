@@ -8,7 +8,6 @@
 
 import UIKit
 import AsyncDisplayKit
-import Unbox
 
 class SearchViewController: ASViewController<ASTableNode> {
     
@@ -54,35 +53,35 @@ class SearchViewController: ASViewController<ASTableNode> {
     }
     
     func fetchNewBatchWidthContext(_ context: ASBatchContext?) {
-        GoogleApiAdap.request(target: .top_headlines(query: nil,
-                                                  sources: [.google_news],
-                                                  domains: nil,
-                                                  from: nil, to: nil,
-                                                  language: nil, sortBy: nil,
-                                                  pageSize: nil,
-                                                  page: nil), success: { (res) in
-                                                    DispatchQueue.main.async {
-                                                        do {
-                                                            let top: GArticles = try unbox(data: res.data)
-
-                                                            if let _ = self.topHeadLines {
-                                                                self.topHeadLines!.append(unboxable_objec: top)
-                                                            } else {
-                                                                self.topHeadLines = top
-                                                            }
-                                                            self.addRowsIntoTableNode(newTopCount: top.articles.count)
-                                                        } catch {
-                                                            debugPrint("parse json error ! ")
-                                                        }
-                                                    }
-                                                    context?.completeBatchFetching(true)
-        }, error: { (error) in
-            debugPrint(error.localizedDescription)
-            if let _ = context { context!.completeBatchFetching(true) }
-        }) { (moya) in
-            debugPrint(moya)
-            if let _ = context { context!.completeBatchFetching(true) }
-        }
+//        GoogleApiAdap.request(target: .top_headlines(query: nil,
+//                                                  sources: [.google_news],
+//                                                  domains: nil,
+//                                                  from: nil, to: nil,
+//                                                  language: nil, sortBy: nil,
+//                                                  pageSize: nil,
+//                                                  page: nil), success: { (res) in
+//                                                    DispatchQueue.main.async {
+////                                                        do {
+////                                                            let top: GArticles = try unbox(data: res.data)
+////
+////                                                            if let _ = self.topHeadLines {
+////                                                                self.topHeadLines!.append(unboxable_objec: top)
+////                                                            } else {
+////                                                                self.topHeadLines = top
+////                                                            }
+////                                                            self.addRowsIntoTableNode(newTopCount: top.articles.count)
+////                                                        } catch {
+////                                                            debugPrint("parse json error ! ")
+////                                                        }
+//                                                    }
+//                                                    context?.completeBatchFetching(true)
+//        }, error: { (error) in
+//            debugPrint(error.localizedDescription)
+//            if let _ = context { context!.completeBatchFetching(true) }
+//        }) { (moya) in
+//            debugPrint(moya)
+//            if let _ = context { context!.completeBatchFetching(true) }
+//        }
     }
     
     func addRowsIntoTableNode(newTopCount newTops: Int) {
@@ -103,18 +102,19 @@ extension SearchViewController: ASTableDataSource, ASTableDelegate {
         case 0, 1:
             return 1
         default:
-            return self.topHeadLines?.articles.count ?? 0
+//            return self.topHeadLines?.articles.count ?? 0
+            return 0
         }
     }
     
     func tableNode(_ tableNode: ASTableNode, nodeBlockForRowAt indexPath: IndexPath) -> ASCellNodeBlock {
         if indexPath.section == 2 {
             let nodeBlock: ASCellNodeBlock = {
-                guard let article = self.topHeadLines?.articles[indexPath.row] else {
+//                guard let article = self.topHeadLines?.articles[indexPath.row] else {
                     return ASCellNode()
-                }
-                
-                return HistoryNode(article: article)
+//                }
+//
+//                return HistoryNode(article: article)
             }
             
             return nodeBlock
