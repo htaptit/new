@@ -48,12 +48,7 @@ class HistoryNode: ASCellNode {
     
     init(article: GArticle) {
         self.imageNode.url = article.urlToImage
-        
-        if let source = NewsSource(rawValue: article.sourceid.replacingOccurrences(of: "-", with: "_")) {
-            let urlString = source.getFavoriteIconOfDomain()
-            self.favoriteImageNode.url = URL(string: urlString)
-        }
-        
+
         self.titleNode = ASTextNode()
         let title = NSAttributedString(string: article.title ?? "", attributes: [NSAttributedStringKey.foregroundColor: UIColor.black, NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14)])
         self.titleNode.attributedText = title

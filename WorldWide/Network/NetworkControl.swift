@@ -12,18 +12,21 @@ import Moya
 enum WWAPI {
     // newsapi
     case top_headlines(query: String?, sources: [NewsSource]?, domains: [NewsSource]?, from: String?, to: String?, language: String?, sortBy: String?, pageSize: Int?, page: Int?)
+    case gheadline(country: String?, page: Int?)
     
     // mineapi
     case everything(query: String?, sources: [NewsSource]?, domains: [NewsSource]?, from: String?, to: String?, language: String?, sortBy: String?, pageSize: Int?, page: Int?)
     case get_asources()
-    case signin(username: String, passwd: String)
+    case signin(username: String?, passwd: String?)
     case earticles(sids: [Int], offset: Int)
+    case types()
 }
 
 extension WWAPI : TargetType {
     var baseURL: URL  {
         switch self {
-        case .top_headlines:
+        case .top_headlines,
+             .gheadline:
             guard let url = URL(string: "https://newsapi.org") else {
                 fatalError("base url could not be configured.")
             }
@@ -40,7 +43,8 @@ extension WWAPI : TargetType {
     
     var path: String {
         switch self {
-        case .top_headlines:
+        case .top_headlines,
+             .gheadline:
             return "/v2/top-headlines"
         case .everything:
             return "/ggarticles/v1/everything"
@@ -52,6 +56,8 @@ extension WWAPI : TargetType {
             return "/accounts/login"
         case .earticles:
             return "/earticles"
+        case .types:
+            return "/types"
         }
     }
     
@@ -60,7 +66,9 @@ extension WWAPI : TargetType {
         case .top_headlines,
              .everything,
              .get_asources,
-             .earticles:
+             .earticles,
+             .gheadline,
+             .types:
             return .get
             
         case .signin:
@@ -99,8 +107,24 @@ extension WWAPI : TargetType {
             
             
         case .signin(let username, let passwd):
-            params["username"] = username
-            params["password"] = passwd
+            if let _ = username {
+                params["username"] = username!
+            }
+            
+            if let _ = passwd {
+                params["password"] = passwd!
+            }
+            
+            return params
+        case .gheadline(let country, let page):
+            if let _ = country {
+                params["country"] = country!
+            }
+            
+            if let _ = page {
+                params["page"] = page
+            }
+            
             return params
         case .earticles(let sids, let offset):
             if sids.count > 1 {
@@ -112,10 +136,13 @@ extension WWAPI : TargetType {
                 params["filter"] = ["where": ["or": ors], "offset": offset]
             } else {
                 if let sid = sids.first {
-                    params["filter"] = ["where": ["sourcesId": sid]]
+                    params["filter"] = ["where": ["sourcesId": sid], "offset": offset]
                 }
             }
             
+            return params
+            
+        case .types:
             return params
         }
     }
@@ -126,7 +153,8 @@ extension WWAPI : TargetType {
     
     var headers: [String : String]? {
         switch self {
-        case .top_headlines:
+        case .top_headlines,
+             .gheadline:
             // key by newsapi.org
             // account: hoang.tronganh@icloud.com
             return ["X-Api-Key" : "2c297d7fb6b940ff9eb0e53651ad8997"]
@@ -145,7 +173,9 @@ extension WWAPI : TargetType {
              .everything,
              .get_asources,
              .signin,
-             .earticles:
+             .earticles,
+             .gheadline,
+             .types:
             if let _ = self.parameters {
                 return .requestParameters(parameters: self.parameters!, encoding: parameterEncoding)
             }

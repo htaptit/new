@@ -12,81 +12,68 @@ import AsyncDisplayKit
 enum CellState {
     case collapsed
     case expanded
-//
-//    var carretImage: UIImage {
-//        switch self {
-//        case .collapsed:
-//            return #imageLiteral(resourceName: "expand")
-//        case .expanded:
-//            return #imageLiteral(resourceName: "collapse")
-//        }
-//    }
 }
 class BaseCell: ASCellNode {
     
-//    private var stackNode: ASDisplayNode = ASDisplayNode()
-    
-    private var baseNode: Base = {
-        let node = Base()
-        
-//        node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width, height: 95)
+    private let baseImage: ASImageNode = {
+        let node = ASImageNode()
+        node.image = #imageLiteral(resourceName: "no_image")
+        node.style.preferredSize = CGSize(width: 65.0, height: 65.0)
+        node.cornerRadius = 3.0
         
         return node
     }()
-//
-//    private var detailNode: Detail = {
-//        let node = Detail()
-//        return node
-//    }()
-//
-//    var stackView: UIStackView?
-//
+    
+    private let nameText: ASTextNode = {
+        let node = ASTextNode()
+        node.attributedText = NSAttributedString(string: "Hoang Trong Anh")
+        return node
+    }()
+    
+    private let locationText: ASTextNode = {
+        let node = ASTextNode()
+        node.attributedText = NSAttributedString(string: "Hung Yen")
+        return node
+    }()
+    
+    private let languageText: ASTextNode = {
+        let node = ASTextNode()
+        node.attributedText = NSAttributedString(string: "Viet Nam")
+        return node
+    }()
+    
+    private let explanButton: ASButtonNode = {
+        let node = ASButtonNode()
+        node.setImage(#imageLiteral(resourceName: "icn_more"), for: .normal)
+        node.style.preferredSize = CGSize(width: 20, height: 20)
+        
+        return node
+    }()
+    
     override init() {
         super.init()
         
-//        let _tmpNode = ASDisplayNode.init { () -> UIView in
-//            let stack = UIStackView(arrangedSubviews: [ self.baseNode.view, self.detailNode.view ])
-//            stack.spacing = 0
-//            stack.axis = .vertical
-//            stack.distribution = .fillEqually
-//            stack.alignment = UIStackViewAlignment.center
-//            stack.arrangedSubviews.last?.isHidden = true
-//            self.stackView = stack
-//
-//            return stack
-//        }
-//
-//        self.stackNode = _tmpNode
-//
-//        self.addSubnode(stackNode)
         automaticallyManagesSubnodes = true
-        
-        self.selectionStyle = .none
+        selectionStyle = .none
     }
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
-        return ASInsetLayoutSpec(insets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0), child: baseNode)
+        let childAreaCenter = ASStackLayoutSpec(direction: .horizontal, spacing: 5.0, justifyContent: .spaceAround, alignItems: .center, children: [locationText, languageText])
+        
+        let centerArea = ASStackLayoutSpec(direction: .vertical, spacing: 2.0, justifyContent: .spaceAround, alignItems: .center, children: [nameText, childAreaCenter])
+        
+        let centerYArea  = ASCenterLayoutSpec(centeringOptions: .Y, sizingOptions: [], child: centerArea)
+        let centerYImage = ASCenterLayoutSpec(centeringOptions: .Y, sizingOptions: [], child: baseImage)
+        let centerYExplan = ASCenterLayoutSpec(centeringOptions: .Y, sizingOptions: [], child: explanButton)
+        
+        let _area = ASStackLayoutSpec(direction: .horizontal,
+                                      spacing: 0.0,
+                                      justifyContent: .spaceBetween,
+                                      alignItems: .stretch,
+                                      children: [centerYImage,
+                                                 centerYArea,
+                                                 centerYExplan])
+        
+        return ASInsetLayoutSpec(insets: UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5), child: _area)
     }
-    
-//    var state: CellState = .collapsed {
-//        didSet {
-//            toggle()
-//        }
-//    }
-    
-//    private func toggle() {
-//        if stateIsCollapsed() {
-//            self.style.preferredSize.height = 95
-//        } else {
-//            self.style.preferredSize.height = 300
-//        }
-//
-//        self.transitionLayout(withAnimation: false, shouldMeasureAsync: false) {
-//            self.stackView?.arrangedSubviews.last?.isHidden = self.stateIsCollapsed()
-//        }
-//    }
-//
-//    private func stateIsCollapsed() -> Bool {
-//        return state == .collapsed
-//    }
 }

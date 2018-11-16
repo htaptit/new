@@ -8,12 +8,17 @@
 
 import UIKit
 import AsyncDisplayKit
+import RxSwift
 
 class SearchViewController: ASViewController<ASTableNode> {
     
     lazy var searchBar = UISearchBar(frame: CGRect.zero)
     
-    private var topHeadLines: GArticles?
+    private var bag = DisposeBag()
+    
+    private var page: Int = 0
+    
+    private var gHeadLines: GArticles?
     
     init() {
         super.init(node: ASTableNode())
@@ -30,8 +35,6 @@ class SearchViewController: ASViewController<ASTableNode> {
         super.viewDidLoad()
         
         loadSearchBar()
-        
-        fetchNewBatchWidthContext(nil)
     }
     
     private func loadSearchBar() {
@@ -53,39 +56,27 @@ class SearchViewController: ASViewController<ASTableNode> {
     }
     
     func fetchNewBatchWidthContext(_ context: ASBatchContext?) {
-//        GoogleApiAdap.request(target: .top_headlines(query: nil,
-//                                                  sources: [.google_news],
-//                                                  domains: nil,
-//                                                  from: nil, to: nil,
-//                                                  language: nil, sortBy: nil,
-//                                                  pageSize: nil,
-//                                                  page: nil), success: { (res) in
-//                                                    DispatchQueue.main.async {
-////                                                        do {
-////                                                            let top: GArticles = try unbox(data: res.data)
-////
-////                                                            if let _ = self.topHeadLines {
-////                                                                self.topHeadLines!.append(unboxable_objec: top)
-////                                                            } else {
-////                                                                self.topHeadLines = top
-////                                                            }
-////                                                            self.addRowsIntoTableNode(newTopCount: top.articles.count)
-////                                                        } catch {
-////                                                            debugPrint("parse json error ! ")
-////                                                        }
-//                                                    }
-//                                                    context?.completeBatchFetching(true)
-//        }, error: { (error) in
-//            debugPrint(error.localizedDescription)
-//            if let _ = context { context!.completeBatchFetching(true) }
-//        }) { (moya) in
-//            debugPrint(moya)
-//            if let _ = context { context!.completeBatchFetching(true) }
-//        }
+        WWService.getHeadLinesByCountry(country: "us", page: self.page)
+            .subscribe(onNext: { (result) in
+                if let _ = self.gHeadLines {
+                    
+                } else {
+                    self.gHeadLines = result
+                    self.addRowsIntoTableNode(newTopCount: result.articles?.count ?? 0)
+                }
+            }, onError: { (error) in
+                debugPrint(error)
+                context?.completeBatchFetching(true)
+            }, onCompleted: {
+                context?.completeBatchFetching(true)
+                self.page = self.page + 1
+            }) {
+                context?.completeBatchFetching(true)
+        }.disposed(by: self.bag)
     }
     
     func addRowsIntoTableNode(newTopCount newTops: Int) {
-        guard let articles = self.topHeadLines?.articles else {  return }
+        guard let articles = self.gHeadLines?.articles else {  return }
         let indexRange = (articles.count - newTops..<articles.count)
         let indexPaths = indexRange.map { IndexPath(row: $0, section: 2) }
         self.node.insertRows(at: indexPaths, with: .none)
@@ -93,6 +84,14 @@ class SearchViewController: ASViewController<ASTableNode> {
 }
 
 extension SearchViewController: ASTableDataSource, ASTableDelegate {
+    func shouldBatchFetch(for tableNode: ASTableNode) -> Bool {
+        return true
+    }
+    
+    func tableNode(_ tableNode: ASTableNode, willBeginBatchFetchWith context: ASBatchContext) {
+        self.fetchNewBatchWidthContext(context)
+    }
+    
     func numberOfSections(in tableNode: ASTableNode) -> Int {
         return 3
     }
@@ -102,19 +101,17 @@ extension SearchViewController: ASTableDataSource, ASTableDelegate {
         case 0, 1:
             return 1
         default:
-//            return self.topHeadLines?.articles.count ?? 0
-            return 0
+            return self.gHeadLines?.articles?.count ?? 0
         }
     }
     
     func tableNode(_ tableNode: ASTableNode, nodeBlockForRowAt indexPath: IndexPath) -> ASCellNodeBlock {
         if indexPath.section == 2 {
             let nodeBlock: ASCellNodeBlock = {
-//                guard let article = self.topHeadLines?.articles[indexPath.row] else {
+                guard let article = self.gHeadLines?.articles?[indexPath.row] else {
                     return ASCellNode()
-//                }
-//
-//                return HistoryNode(article: article)
+                }
+                return HistoryNode(article: article)
             }
             
             return nodeBlock
@@ -128,13 +125,12 @@ extension SearchViewController: ASTableDataSource, ASTableDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 25.0
+        return 30.0
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let headerView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 25.0))
-        headerView.backgroundColor = UIColor(hexString: "#d4f4e4").withAlphaComponent(0.5)
-        
+
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 12.0, weight: .thin)
@@ -142,11 +138,16 @@ extension SearchViewController: ASTableDataSource, ASTableDelegate {
         switch section {
         case 0:
             label.text =  "History"
+            label.textColor = UIColor(hexString: "#325d79")
         case 1:
             label.text =  "Most searched"
+            label.textColor = UIColor(hexString: "#f26627")
         default:
             label.text =  "Top Headline"
+            label.textColor = UIColor(hexString: "#ee4540")
         }
+        
+        label.font = UIFont.boldSystemFont(ofSize: 12.0)
         
         let imageV = UIImageView()
         imageV.translatesAutoresizingMaskIntoConstraints = false

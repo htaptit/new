@@ -62,7 +62,7 @@ class Google: ASCellNode {
         
         self.created_at = ASTextNode()
         if let publishedAt = article.publishedAt {
-            let createdAtText = NSAttributedString(string: UnboxDateFormater.date(format: "MMM dd, H:m").string(from: publishedAt), attributes: [NSAttributedStringKey.foregroundColor : UIColor.darkGray, NSAttributedStringKey.font: UIFont.systemFont(ofSize: 9)])
+            let createdAtText = NSAttributedString(string: UnboxDateFormater.date(format: "MMM dd, HH:mm").string(from: publishedAt), attributes: [NSAttributedStringKey.foregroundColor : UIColor.darkGray, NSAttributedStringKey.font: UIFont.systemFont(ofSize: 9)])
             self.created_at.attributedText = createdAtText
         }
         

@@ -33,15 +33,6 @@ class NewViewController: ASViewController<ASTableNode> {
         node.allowsSelectionDuringEditing = false
         
         node.view.separatorStyle = .none
-        node.view.rowHeight = UITableViewAutomaticDimension
-        node.view.estimatedRowHeight = 200
-        // Do any additional setup after loading the view.
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        self.tabBarController?.tabBar.isTranslucent = false
-        self.navigationController?.isToolbarHidden = true
-        self.navigationController?.hidesBarsOnSwipe = true
     }
 
     override func didReceiveMemoryWarning() {

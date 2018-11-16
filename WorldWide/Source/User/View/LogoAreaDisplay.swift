@@ -13,7 +13,10 @@ class LogoAreaDisplay: ASDisplayNode {
     private let logo: ASNetworkImageNode = {
         let node = ASNetworkImageNode()
         node.style.preferredSize = CGSize(width: 80, height: 80)
+        node.backgroundColor = UIColor.white
         node.cornerRadius = 40
+        node.borderWidth = 5.0
+        node.borderColor = UIColor(hexString: "#5d5e72").cgColor
         node.image = #imageLiteral(resourceName: "icn_tabbar_news")
         
         return node

@@ -8,19 +8,21 @@
 
 import UIKit
 import AsyncDisplayKit
+import RxSwift
 
 class LoginViewController: ASViewController<ASScrollNode> {
     let scrollNode = ASScrollNode()
     
+    private let bag = DisposeBag()
+    
     private let logoArea: LogoAreaDisplay = {
         let node = LogoAreaDisplay()
-        node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width, height: 150)
         return node
     }()
     
     private let FromArea: FormLoginDisplay = {
         let node = FormLoginDisplay()
-        node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width, height: 250)
+        node.cornerRadius = 5.0
         return node
     }()
     
@@ -30,17 +32,25 @@ class LoginViewController: ASViewController<ASScrollNode> {
         
         super.init(node: scrollNode)
         
-        scrollNode.layoutSpecBlock = { node, constrainedSize in
-            let scrollStack = ASStackLayoutSpec.vertical()
-            scrollStack.spacing = 15.0
-            scrollStack.justifyContent = .start
-            scrollStack.alignItems = .notSet
-            scrollStack.children = [self.logoArea, self.FromArea]
-            
-            return scrollStack
+        guard let statusBarView = UIApplication.shared.value(forKeyPath: "statusBarWindow.statusBar") as? UIView else {
+            return
         }
         
-        scrollNode.backgroundColor = .white
+        statusBarView.backgroundColor = UIColor(hexString: "#5d5e72")
+        
+        scrollNode.layoutSpecBlock = { node, constrainedSize in
+            let from = ASCenterLayoutSpec(centeringOptions: .XY, sizingOptions: [], child: self.FromArea)
+            from.style.layoutPosition.y = UIScreen.main.bounds.height / 4 + 40.0
+            
+            let logo = ASCenterLayoutSpec(centeringOptions: .XY, sizingOptions: [], child: self.logoArea)
+            logo.style.layoutPosition.y = UIScreen.main.bounds.height / 4
+            
+            let ab = ASAbsoluteLayoutSpec(children: [from, logo])
+            
+            return ab
+        }
+        
+        scrollNode.backgroundColor = UIColor(hexString: "#5d5e72")
         
         FromArea.signinProtocol = self
     }
@@ -59,26 +69,21 @@ class LoginViewController: ASViewController<ASScrollNode> {
 
 extension LoginViewController: SigninProtocol {
     func signin(username: String?, password: String?) {
+        let _ = UserCurrent.clearUserSession()
         guard let name = username, let passw = password else {
             self.view.endEditing(true)
             return
         }
-        
-        let target = WWAPI.signin(username: name, passwd: passw)
-//        GoogleApiAdap.request(target: target, success: { (success) in
-////            do {
-////                let user: User = try unbox(data: success.data)
-////                
-////                UserCurrent.saveUser(user.token, user.time_to_live, user.userId)
-////                
-////                debugPrint("##### Login success ######")
-////            } catch {
-////                debugPrint("Error parse data !")
-////            }
-//        }, error: { (error) in
-//            debugPrint(error)
-//        }) { (fail) in
-//            debugPrint(fail)
-//        }
+
+        WWService.signin(username: name, password: passw)
+            .subscribe(onNext: { (user) in
+                UserCurrent.saveUser(user.token, user.time_to_live, user.userId)
+            }, onError: { (error) in
+                debugPrint("##### Error \(error)######")
+            }, onCompleted: {
+                debugPrint("##### Login success ######")
+            }) {
+                debugPrint("##### Login success ######")
+        }.disposed(by: bag)
     }
 }

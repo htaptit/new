@@ -14,8 +14,8 @@ class GoogleViewController: ASViewController<ASTableNode> {
     private let refreshControl = UIRefreshControl()
     private var bag = DisposeBag()
     
-    var topHeadLines: Tops?
-    var page: Int = 0
+    var earticles: Articles?
+    var isEnd: Bool = false
     
     init() {
         super.init(node: ASTableNode())
@@ -41,7 +41,6 @@ class GoogleViewController: ASViewController<ASTableNode> {
     
     @objc private func refreshWeatherData(_ sender: Any) {
         // Fetch Weather Data
-        self.page = 1
         self.fetchNewBatchWidthContext(nil)
     }
     
@@ -57,23 +56,35 @@ class GoogleViewController: ASViewController<ASTableNode> {
     }
     
     func fetchNewBatchWidthContext(_ context: ASBatchContext?) {
-        WWService.getEArticles(sids: [1,2,3], offset: self.page)
-            .distinctUntilChanged({ $0 === $1 })
+        if isEnd {
+            context?.completeBatchFetching(true)
+            return
+        }
+        
+        WWService.getEArticles(sids: [1,2,3], offset: self.earticles?.articles.count ?? 0)
             .subscribe(onNext: { (tops) in
-                self.topHeadLines = tops
+                if tops.articles.isEmpty {
+                    self.isEnd = true
+                    return
+                }
+                if let _ = self.earticles {
+                    self.earticles?.append(mappable: tops)
+                } else {
+                    self.earticles = tops
+                }
+                
                 self.addRowsIntoTableNode(newTopCount: tops.articles.count)
             }, onError: { (error) in
                 context?.completeBatchFetching(true)
             }, onCompleted: {
                 context?.completeBatchFetching(true)
-                self.page = self.page + 1
             }) {
                 context?.completeBatchFetching(true)
         }.disposed(by: bag)
     }
     
     func addRowsIntoTableNode(newTopCount newTops: Int) {
-        guard let articles = self.topHeadLines?.articles else {  return }
+        guard let articles = self.earticles?.articles else {  return }
         let indexRange = (articles.count - newTops..<articles.count)
         let indexPaths = indexRange.map { IndexPath(row: $0, section: 0) }
         self.node.insertRows(at: indexPaths, with: .none)
@@ -87,14 +98,14 @@ extension GoogleViewController: ASTableDataSource, ASTableDelegate {
     }
     
     func tableNode(_ tableNode: ASTableNode, numberOfRowsInSection section: Int) -> Int {
-        if let articles = self.topHeadLines?.articles {
+        if let articles = self.earticles?.articles {
             return articles.count
         }
         return 0
     }
     
     func tableNode(_ tableNode: ASTableNode, nodeBlockForRowAt indexPath: IndexPath) -> ASCellNodeBlock {
-        let article = self.topHeadLines!.articles[indexPath.row]
+        let article = self.earticles!.articles[indexPath.row]
         let nodeBlock: ASCellNodeBlock = {
             return Google(article: article)
         }
@@ -104,7 +115,7 @@ extension GoogleViewController: ASTableDataSource, ASTableDelegate {
     }
     
     func tableNode(_ tableNode: ASTableNode, didSelectRowAt indexPath: IndexPath) {
-        if let articles = self.topHeadLines?.articles {
+        if let articles = self.earticles?.articles {
             let vc = WebViewController(url: articles[indexPath.row].url)
             vc.view.backgroundColor = UIColor.black.withAlphaComponent(0.0)
             vc.modalPresentationStyle = UIModalPresentationStyle.overFullScreen

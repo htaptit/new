@@ -8,13 +8,17 @@
 
 import UIKit
 import AsyncDisplayKit
+import RxSwift
 
 class SourcesViewController: ASViewController<ASTableNode> {
-    private let allSourceCase: [NewsSource] = NewsSource.allValues
+    private var dsTypes: Types?
+    
+    private var bag = DisposeBag()
     
     init() {
         super.init(node: ASTableNode())
         node.dataSource = self
+        node.delegate = self
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -23,14 +27,40 @@ class SourcesViewController: ASViewController<ASTableNode> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         self.navigationItem.title = "Sources"
     }
+    
+    func fetch(_ context: ASBatchContext?) {
+        WWService.getSourceRelationType()
+            .subscribe(onNext: { (types) in
+                
+                if let _ = self.dsTypes {
+                    
+                } else {
+                    self.dsTypes = types
+                }
+                
+                self.node.reloadData()
+            }, onError: { (error) in
+                
+            }, onCompleted: {
+                
+            }) {
+                
+            }.disposed(by: bag)
+    }
+    
+//    func addRowsIntoTableNode() {
+//        guard let types = self.dsTypes?.types else { return }
+//        let indexRange = 0..<types.count
+//        let indexPaths = indexRange.map { IndexPath(row: 0, section: $0) }
+//        self.node.insertRows(at: indexPaths, with: .none)
+//    }
 }
 
-extension SourcesViewController: ASTableDataSource {
+extension SourcesViewController: ASTableDataSource, ASTableDelegate {
     func numberOfSections(in tableNode: ASTableNode) -> Int {
-        return 1
+        return 2
     }
     
     func tableNode(_ tableNode: ASTableNode, numberOfRowsInSection section: Int) -> Int {
@@ -38,13 +68,31 @@ extension SourcesViewController: ASTableDataSource {
     }
     
     func tableNode(_ tableNode: ASTableNode, nodeBlockForRowAt indexPath: IndexPath) -> ASCellNodeBlock {
-        let _node = SourcesNode()
-        _node.style.preferredSize = CGSize(width: 120, height: 120)
-        
-        let block: ASCellNodeBlock = {
-            return _node
+        if indexPath.section == 1 {
+            let block: ASCellNodeBlock = {
+                let _node = SourcesPageNode()
+                _node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - 66.0 - 115.0)
+                return _node
+            }
+            
+            return block
+        } else {
+            let block: ASCellNodeBlock = {
+                let _node = SourcesPageControl()
+                _node.types = self.dsTypes
+                print(self.dsTypes?.types)
+                return _node
+            }
+            
+            return block
         }
-        
-        return block
+    }
+    
+    func shouldBatchFetch(for tableNode: ASTableNode) -> Bool {
+        return true
+    }
+    
+    func tableNode(_ tableNode: ASTableNode, willBeginBatchFetchWith context: ASBatchContext) {
+        self.fetch(context)
     }
 }

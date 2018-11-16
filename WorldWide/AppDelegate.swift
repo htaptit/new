@@ -23,10 +23,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UINavigationBar.appearance().backgroundColor = UIColor.white
         
         window = UIWindow()
-        window?.rootViewController = RootTabBarController()
-        window?.makeKeyAndVisible()
         
-        debugPrint(UserCurrent.getToken)
+        UserCurrent.clearUserSession()
+        
+        if let _ = UserCurrent.getToken.token {
+            window?.rootViewController = RootTabBarController()
+        } else {
+            window?.rootViewController = LoginViewController()
+        }
+        window?.makeKeyAndVisible()
         
         return true
     }

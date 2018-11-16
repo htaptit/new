@@ -24,21 +24,23 @@ extension UITextField {
 class TextFieldNode: ASDisplayNode {
     var placeHolder: String?
     
-    var textField: UITextField = {
-        return UITextField()
+    var textField: TextField = {
+        return TextField()
     }()
     
     private var textFieldNode: ASDisplayNode!
     
     init(isSecret: Bool = false) {
         super.init()
-        
         self.textFieldNode = ASDisplayNode(viewBlock: { () -> UIView in
-            self.textField.layer.cornerRadius = 5.0
             self.textField.isSecureTextEntry = isSecret
             self.textField.placeholder = self.placeHolder
-            self.textField.borderStyle = UITextBorderStyle.none
-            self.textField.setBottomBorder()
+            
+            self.textField.font = UIFont.systemFont(ofSize: 12.0)
+            self.textField.layer.cornerRadius = 15
+            self.textField.layer.borderWidth = 0.1
+            self.textField.layer.borderColor = UIColor.gray.cgColor
+            
             return self.textField
         })
         
@@ -50,20 +52,49 @@ class TextFieldNode: ASDisplayNode {
     }
 }
 
-class FormLoginDisplay: ASDisplayNode {
-    var signinProtocol: SigninProtocol?
+class TextField: UITextField {
     
+    let padding = UIEdgeInsets(top: 0, left: 40, bottom: 0, right: 40)
+    
+    override open func textRect(forBounds bounds: CGRect) -> CGRect {
+        return UIEdgeInsetsInsetRect(bounds, padding)
+    }
+    
+    override open func placeholderRect(forBounds bounds: CGRect) -> CGRect {
+        return UIEdgeInsetsInsetRect(bounds, padding)
+    }
+    
+    override open func editingRect(forBounds bounds: CGRect) -> CGRect {
+        return UIEdgeInsetsInsetRect(bounds, padding)
+    }
+}
+
+class FormLoginDisplay: ASDisplayNode {
+    var isForgetPassword: Bool = false
+    
+    var isSignup: Bool = false
+    
+    var signinProtocol: SigninProtocol?
+
     private let username: TextFieldNode = {
         let node = TextFieldNode()
         node.placeHolder = "Username"
-        node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width - 30.0, height: 30.0)
+        node.textField.leftViewMode = .always
+        let leftIcn = UIImageView(frame: CGRect(x: 5, y: 5, width: 30, height: 30))
+        leftIcn.image = #imageLiteral(resourceName: "icn_add")
+        node.textField.leftView = leftIcn
+        node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width / 1.5, height: 30.0)
         return node
     }()
     
     private let password: TextFieldNode = {
         let node = TextFieldNode(isSecret: true)
         node.placeHolder = "Password"
-        node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width - 30.0, height: 30.0)
+        node.textField.leftViewMode = .always
+        let leftIcn = UIImageView(frame: CGRect(x: 5, y: 5, width: 30, height: 30))
+        leftIcn.image = #imageLiteral(resourceName: "icn_add")
+        node.textField.leftView = leftIcn
+        node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width / 1.5, height: 30.0)
         return node
     }()
     
@@ -72,7 +103,7 @@ class FormLoginDisplay: ASDisplayNode {
         
         node.setTitle("Signin", with: nil, with: .white, for: .normal)
         node.backgroundColor = UIColor(hexString: "#2a4849")
-        node.cornerRadius = 5.0
+        node.cornerRadius = 15.0
         node.isUserInteractionEnabled = true
         node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width / 2, height: 35.0)
         return node
@@ -80,7 +111,7 @@ class FormLoginDisplay: ASDisplayNode {
     
     private let signup: ASTextNode = {
         let node = ASTextNode()
-        let title = NSAttributedString(string: "You can sign up for an account here", attributes: [NSAttributedStringKey.foregroundColor: UIColor(hexString: "#27ae60"), NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14)])
+        let title = NSAttributedString(string: "Sign up", attributes: [NSAttributedStringKey.foregroundColor: UIColor(hexString: "#27ae60"), NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14)])
         
         node.attributedText = title
         node.maximumNumberOfLines = 1
@@ -91,22 +122,44 @@ class FormLoginDisplay: ASDisplayNode {
         
     }()
     
+    private let forgotPassword: ASTextNode = {
+        let node = ASTextNode()
+        let title = NSAttributedString(string: "Forgot password ?", attributes: [NSAttributedStringKey.foregroundColor: UIColor(hexString: "#27ae60"), NSAttributedStringKey.font: UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.semibold)])
+        
+        node.attributedText = title
+        node.maximumNumberOfLines = 1
+        
+        node.isUserInteractionEnabled = true
+        return node
+        
+    }()
+    
     override init() {
         super.init()
-        
         automaticallyManagesSubnodes = true
-        
+        self.backgroundColor = .white
+        // target
         login.addTarget(self, action: #selector(signin), forControlEvents: .touchUpInside)
     }
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
-        let areaTextField = ASStackLayoutSpec(direction: .vertical, spacing: 25.0, justifyContent: .start, alignItems: .center, children: [self.username, self.password, self.login, ASInsetLayoutSpec(insets: UIEdgeInsets(top: 50.0, left: 25.0, bottom: 25.0, right: 25.0), child: self.signup)])
-        
-        return ASInsetLayoutSpec(insets: UIEdgeInsets(top: 35.0, left: 25.0, bottom: CGFloat.infinity, right: 25.0), child: areaTextField)
+        let areaTextField = ASStackLayoutSpec(direction: .vertical,
+                                              spacing: 25.0,
+                                              justifyContent: .start,
+                                              alignItems: .center,
+                                              children: [self.username,
+                                                         self.password])
+        if self.isForgetPassword {
+            areaTextField.children?.append(self.forgotPassword)
+        }
+        let root = ASStackLayoutSpec(direction: .vertical, spacing: 25.0, justifyContent: .start, alignItems: .center, children: [areaTextField, self.login])
+        return ASInsetLayoutSpec(insets: UIEdgeInsets(top: 60, left: 30, bottom: 50, right: 30), child: root)
     }
     
     @objc private func signin() {
-        self.signinProtocol?.signin(username: self.username.textField.text, password: self.password.textField.text)
+        self.isForgetPassword = true
+        self.transitionLayout(withAnimation: true, shouldMeasureAsync: true, measurementCompletion: nil)
+//        self.signinProtocol?.signin(username: self.username.textField.text, password: self.password.textField.text)
     }
 }
 

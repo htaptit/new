@@ -8,7 +8,7 @@
 
 import ObjectMapper
 
-class Tops: Mappable {
+class Articles: Mappable {
     var articles: [Article]!
     
     required init?(map: Map) {
@@ -18,5 +18,13 @@ class Tops: Mappable {
     // Mappable
     func mapping(map: Map) {
         self.articles <- map["articles"]
+    }
+    
+    func append(mappable: Mappable) {
+        if (type(of: mappable) == Articles.self) {
+            let s = mappable as! Articles
+            
+            self.articles.append(contentsOf: s.articles)
+        }
     }
 }

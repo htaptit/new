@@ -23,8 +23,10 @@ class BaseService {
                 do {
                     switch result {
                     case .success(let response):
+                        let _ = try response.filterSuccessfulStatusCodes()
+                        
                         let JSON = try response.mapJSON()
-//                        print(JSON)
+                        
                         if let JSONDict = JSON as? [String: Any] {
                             observer.onNext(JSONDict)
                             observer.onCompleted()

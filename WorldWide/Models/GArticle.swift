@@ -24,17 +24,16 @@ class GArticle: Mappable {
         
     }
     
-    
     // Mappable
     func mapping(map: Map) {
-        sourceid <- map["sources.id"]
-        sourcename <- map["sources.name"]
+        sourceid <- map["source.id"]
+        sourcename <- map["source.name"]
         author <- map["author"]
         title <- map["title"]
         description <- map["description"]
-        url <- map["url"]
-        urlToImage <- map["urlToImage"]
-        publishedAt <- (map["publishedAt"], DateTransform())
+        url <- (map["url"], URLTransform())
+        urlToImage <- (map["urlToImage"], URLTransform())
+        publishedAt <- (map["publishedAt"], CustomDateFormatTransform(formatString: "yyyy-MM-dd'T'HH:mm:ss.SSSSZ"))
         content <- map["content"]
     }
 }

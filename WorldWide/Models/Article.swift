@@ -34,7 +34,7 @@ class Article: Mappable {
         url <- (map["url"], URLTransform())
         urlToImage <- (map["urlToImage"], URLTransform())
         fav_icon_url <- (map["sources.fav_icon_url"], URLTransform())
-        publishedAt <- (map["publishedAt"], DateTransform())
+        publishedAt <- (map["publishedAt"], CustomDateFormatTransform(formatString: "yyyy-MM-dd'T'HH:mm:ss.SSSSZ"))
         content <- map["content"]
     }
 }

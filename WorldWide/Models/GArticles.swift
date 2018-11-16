@@ -10,7 +10,7 @@ import Foundation
 import ObjectMapper
 
 class GArticles: Mappable {
-    var articles: [GArticle]?
+    var articles: [GArticle]!
     
     required init?(map: Map) {
         
@@ -19,5 +19,13 @@ class GArticles: Mappable {
     // Mappable
     func mapping(map: Map) {
         articles <- map["articles"]
+    }
+    
+    func append(mappable: Mappable) {
+        if (type(of: mappable) == GArticles.self) {
+            let s = mappable as! GArticles
+            
+            self.articles.append(contentsOf: s.articles)
+        }
     }
 }
