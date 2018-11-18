@@ -47,6 +47,7 @@
 		09A535DD20562C7100E83BFD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A535DC20562C7100E83BFD /* AppDelegate.swift */; };
 		09A535E420562C7100E83BFD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09A535E320562C7100E83BFD /* Assets.xcassets */; };
 		09A535E720562C7100E83BFD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09A535E520562C7100E83BFD /* LaunchScreen.storyboard */; };
+		09A6BBFB21A1560100443D3B /* ASButtonNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A6BBFA21A1560100443D3B /* ASButtonNode.swift */; };
 		09A7CFF02088731B0038EE62 /* UnboxDateFormater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A7CFEF2088731B0038EE62 /* UnboxDateFormater.swift */; };
 		09E15F4F216B14F10002E5BF /* SourcesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E15F4E216B14F10002E5BF /* SourcesViewController.swift */; };
 		09E15F51216B4C4B0002E5BF /* Enum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09E15F50216B4C4B0002E5BF /* Enum.swift */; };
@@ -113,6 +114,7 @@
 		09A535E320562C7100E83BFD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		09A535E620562C7100E83BFD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		09A535E820562C7100E83BFD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		09A6BBFA21A1560100443D3B /* ASButtonNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ASButtonNode.swift; sourceTree = "<group>"; };
 		09A7CFEF2088731B0038EE62 /* UnboxDateFormater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnboxDateFormater.swift; sourceTree = "<group>"; };
 		09E15F4E216B14F10002E5BF /* SourcesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourcesViewController.swift; sourceTree = "<group>"; };
 		09E15F50216B4C4B0002E5BF /* Enum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enum.swift; sourceTree = "<group>"; };
@@ -269,6 +271,7 @@
 				093E85882164B87800FD217E /* ASTextNode.swift */,
 				093E858E2164C98B00FD217E /* UIApplication.swift */,
 				09E15F50216B4C4B0002E5BF /* Enum.swift */,
+				09A6BBFA21A1560100443D3B /* ASButtonNode.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -484,13 +487,14 @@
 				"$(SRCROOT)/Carthage/Build/iOS/ReactiveMoya.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/ObjectMapper.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/RxSwift.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/IQKeyboardManager.framework",
 			);
 			name = "Copy carthage libs";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks";
+			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -532,6 +536,7 @@
 				0955DAEC205A5A3900D1CECA /* Google.swift in Sources */,
 				0931CE0921870BEC005BAF47 /* LoginViewController.swift in Sources */,
 				09F6A03C209AE04500021683 /* DetailWebViewController.swift in Sources */,
+				09A6BBFB21A1560100443D3B /* ASButtonNode.swift in Sources */,
 				09478D722056864F00E3D266 /* TabBarController.swift in Sources */,
 				09858AB721631DB100AC6636 /* WebViewController.swift in Sources */,
 				0980B8DB218AF7DD00F424AB /* BaseService.swift in Sources */,
@@ -676,7 +681,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = UT85388U7N;
+				DEVELOPMENT_TEAM = 254Q23AKWK;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -687,7 +692,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = anhht.WorldWide;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -696,7 +701,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = UT85388U7N;
+				DEVELOPMENT_TEAM = 254Q23AKWK;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -707,7 +712,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = anhht.WorldWide;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};

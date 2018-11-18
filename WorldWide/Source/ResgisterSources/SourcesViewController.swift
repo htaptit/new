@@ -80,7 +80,6 @@ extension SourcesViewController: ASTableDataSource, ASTableDelegate {
             let block: ASCellNodeBlock = {
                 let _node = SourcesPageControl()
                 _node.types = self.dsTypes
-                print(self.dsTypes?.types)
                 return _node
             }
             

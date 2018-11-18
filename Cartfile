@@ -1,3 +1,4 @@
 github "texturegroup/texture"
-github "Hearst-DD/ObjectMapper" ~> 3.4
+github "tristanhimmelman/ObjectMapper" ~> 3.4
 github "Moya/Moya"
+github "hackiftekhar/IQKeyboardManager"

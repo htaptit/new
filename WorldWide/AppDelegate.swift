@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import AsyncDisplayKit
+import IQKeyboardManager
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -32,6 +32,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window?.rootViewController = LoginViewController()
         }
         window?.makeKeyAndVisible()
+        
+        // IQKeyboardManager
+        IQKeyboardManager.shared().isEnabled = true
+        IQKeyboardManager.shared().isEnableAutoToolbar = true
+        IQKeyboardManager.shared().shouldResignOnTouchOutside = true
         
         return true
     }

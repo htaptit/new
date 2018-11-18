@@ -80,9 +80,14 @@ class FormLoginDisplay: ASDisplayNode {
         let node = TextFieldNode()
         node.placeHolder = "Username"
         node.textField.leftViewMode = .always
-        let leftIcn = UIImageView(frame: CGRect(x: 5, y: 5, width: 30, height: 30))
-        leftIcn.image = #imageLiteral(resourceName: "icn_add")
-        node.textField.leftView = leftIcn
+        let leftIcn = UIImageView(frame: CGRect(x: 10, y: 0, width: 20, height: 20))
+        leftIcn.layer.cornerRadius = 10
+        leftIcn.contentMode = .scaleAspectFit
+        leftIcn.image = UIImage(named: "ic_account_circle")
+        let iconContainerView: UIView = UIView(frame:
+            CGRect(x: 0, y: 0, width: 20, height: 20))
+        iconContainerView.addSubview(leftIcn)
+        node.textField.leftView = iconContainerView
         node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width / 1.5, height: 30.0)
         return node
     }()
@@ -91,9 +96,30 @@ class FormLoginDisplay: ASDisplayNode {
         let node = TextFieldNode(isSecret: true)
         node.placeHolder = "Password"
         node.textField.leftViewMode = .always
-        let leftIcn = UIImageView(frame: CGRect(x: 5, y: 5, width: 30, height: 30))
-        leftIcn.image = #imageLiteral(resourceName: "icn_add")
-        node.textField.leftView = leftIcn
+        let leftIcn = UIImageView(frame: CGRect(x: 10, y: 0, width: 20, height: 20))
+        leftIcn.layer.cornerRadius = 10
+        leftIcn.contentMode = .scaleAspectFit
+        leftIcn.image = UIImage(named: "ic_lock_open")
+        let iconContainerView: UIView = UIView(frame:
+            CGRect(x: 0, y: 0, width: 20, height: 20))
+        iconContainerView.addSubview(leftIcn)
+        node.textField.leftView = iconContainerView
+        node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width / 1.5, height: 30.0)
+        return node
+    }()
+    
+    private let verifiedPassword: TextFieldNode = {
+        let node = TextFieldNode(isSecret: true)
+        node.placeHolder = "Verified password"
+        node.textField.leftViewMode = .always
+        let leftIcn = UIImageView(frame: CGRect(x: 10, y: 0, width: 20, height: 20))
+        leftIcn.layer.cornerRadius = 10
+        leftIcn.contentMode = .scaleAspectFit
+        leftIcn.image = UIImage(named: "ic_lock_open")
+        let iconContainerView: UIView = UIView(frame:
+            CGRect(x: 0, y: 0, width: 20, height: 20))
+        iconContainerView.addSubview(leftIcn)
+        node.textField.leftView = iconContainerView
         node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width / 1.5, height: 30.0)
         return node
     }()
@@ -101,17 +127,17 @@ class FormLoginDisplay: ASDisplayNode {
     private let login: ASButtonNode = {
         let node = ASButtonNode()
         
-        node.setTitle("Signin", with: nil, with: .white, for: .normal)
+        node.setTitle("Signin", with: UIFont.systemFont(ofSize: 12.0, weight: .bold), with: UIColor.white, for: .normal)
         node.backgroundColor = UIColor(hexString: "#2a4849")
         node.cornerRadius = 15.0
         node.isUserInteractionEnabled = true
-        node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width / 2, height: 35.0)
+        node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width / 2, height: 30)
         return node
     }()
     
     private let signup: ASTextNode = {
         let node = ASTextNode()
-        let title = NSAttributedString(string: "Sign up", attributes: [NSAttributedStringKey.foregroundColor: UIColor(hexString: "#27ae60"), NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14)])
+        let title = NSAttributedString(string: "Signup", attributes: [NSAttributedStringKey.foregroundColor: UIColor(hexString: "#27ae60"), NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14)])
         
         node.attributedText = title
         node.maximumNumberOfLines = 1
@@ -130,16 +156,26 @@ class FormLoginDisplay: ASDisplayNode {
         node.maximumNumberOfLines = 1
         
         node.isUserInteractionEnabled = true
+        
         return node
         
     }()
     
     override init() {
         super.init()
-        automaticallyManagesSubnodes = true
+        automaticallyManagesSubnodes = false
+        
+        self.addSubnode(username)
+        self.addSubnode(password)
+        self.addSubnode(forgotPassword)
+        self.addSubnode(login)
+        self.addSubnode(signup)
+        
         self.backgroundColor = .white
         // target
-        login.addTarget(self, action: #selector(signin), forControlEvents: .touchUpInside)
+        login.addTarget(self, action: #selector(signin(_:)), forControlEvents: .touchUpInside)
+        forgotPassword.addTarget(self, action: #selector(forgotPassword(_:)), forControlEvents: .touchUpInside)
+        signup.addTarget(self, action: #selector(signupAction(_:)), forControlEvents: .touchDragInside)
     }
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
@@ -148,18 +184,51 @@ class FormLoginDisplay: ASDisplayNode {
                                               justifyContent: .start,
                                               alignItems: .center,
                                               children: [self.username,
-                                                         self.password])
+                                                         self.password,
+                                                         self.forgotPassword])
+        
         if self.isForgetPassword {
-            areaTextField.children?.append(self.forgotPassword)
+            areaTextField.children?.removeLast()
+            areaTextField.children?.remove(at: 1)
+            
+            self.login.setTitle("Send", with: UIFont.systemFont(ofSize: 12.0, weight: .bold), with: UIColor.white, for: .normal)
         }
-        let root = ASStackLayoutSpec(direction: .vertical, spacing: 25.0, justifyContent: .start, alignItems: .center, children: [areaTextField, self.login])
+        
+        let root = ASStackLayoutSpec(direction: .vertical, spacing: 25.0, justifyContent: .start, alignItems: .center, children: [areaTextField, self.login, self.signup])
+        
+        if self.isSignup {
+            areaTextField.children?.remove(at: 2)
+            root.children?.remove(at: 2)
+            
+            areaTextField.children?.append(self.verifiedPassword)
+            
+            self.login.setTitle("Signup", with: UIFont.systemFont(ofSize: 12.0, weight: .bold), with: UIColor.white, for: .normal)
+        }
+
         return ASInsetLayoutSpec(insets: UIEdgeInsets(top: 60, left: 30, bottom: 50, right: 30), child: root)
     }
     
-    @objc private func signin() {
-        self.isForgetPassword = true
-        self.transitionLayout(withAnimation: true, shouldMeasureAsync: true, measurementCompletion: nil)
+    @objc private func signin(_ sender: ASButtonNode) {
+        sender.pulsate()
 //        self.signinProtocol?.signin(username: self.username.textField.text, password: self.password.textField.text)
+    }
+    
+    @objc private func forgotPassword(_ sender: ASTextNode) {
+        self.forgotPassword.removeFromSupernode()
+        self.signup.removeFromSupernode()
+        self.password.removeFromSupernode()
+        
+        self.isForgetPassword = true
+        self.isSignup = false
+        
+        self.transitionLayout(withAnimation: true, shouldMeasureAsync: true, measurementCompletion: nil)
+    }
+    
+    @objc private func signupAction(_ sender: ASTextNode) {
+        self.isForgetPassword = false
+        self.isSignup = true
+        
+        self.transitionLayout(withAnimation: true, shouldMeasureAsync: true, measurementCompletion: nil)
     }
 }
 
