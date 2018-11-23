@@ -11,6 +11,7 @@ import ObjectMapper
 class Type: Mappable {
     
     var name: String?
+    var image: URL?
     var sources: [Sources]?
     
     required init?(map: Map) {
@@ -19,8 +20,8 @@ class Type: Mappable {
     
     func mapping(map: Map) {
         name <- map["name"]
+        image <- (map["image"], URLTransform())
         sources <- map["sources"]
     }
-    
 }
 

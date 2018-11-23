@@ -49,13 +49,6 @@ class SourcesViewController: ASViewController<ASTableNode> {
                 
             }.disposed(by: bag)
     }
-    
-//    func addRowsIntoTableNode() {
-//        guard let types = self.dsTypes?.types else { return }
-//        let indexRange = 0..<types.count
-//        let indexPaths = indexRange.map { IndexPath(row: 0, section: $0) }
-//        self.node.insertRows(at: indexPaths, with: .none)
-//    }
 }
 
 extension SourcesViewController: ASTableDataSource, ASTableDelegate {
@@ -70,7 +63,7 @@ extension SourcesViewController: ASTableDataSource, ASTableDelegate {
     func tableNode(_ tableNode: ASTableNode, nodeBlockForRowAt indexPath: IndexPath) -> ASCellNodeBlock {
         if indexPath.section == 1 {
             let block: ASCellNodeBlock = {
-                let _node = SourcesPageNode()
+                let _node = SourcesPageNode(dsTypes: self.dsTypes)
                 _node.style.preferredSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height - 66.0 - 115.0)
                 return _node
             }

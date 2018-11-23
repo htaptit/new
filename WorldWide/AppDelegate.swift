@@ -24,13 +24,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         window = UIWindow()
         
-        UserCurrent.clearUserSession()
-        
-        if let _ = UserCurrent.getToken.token {
-            window?.rootViewController = RootTabBarController()
-        } else {
-            window?.rootViewController = LoginViewController()
-        }
+//        UserCurrent.clearUserSession()
+        window?.rootViewController = RootTabBarController()
         window?.makeKeyAndVisible()
         
         // IQKeyboardManager
@@ -66,3 +61,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+extension AppDelegate {
+    static var shared: AppDelegate {
+        return UIApplication.shared.delegate as! AppDelegate
+    }
+    
+    var rootViewController: RootTabBarController {
+        return window!.rootViewController as! RootTabBarController
+    }
+}

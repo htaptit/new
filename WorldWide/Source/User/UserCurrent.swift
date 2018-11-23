@@ -7,41 +7,19 @@
 //
 
 import Foundation
+import RxSwift
 
 struct UserCurrent {
-    static let (access_token, ttl, uid) = ("token", "timeToLive", "uid")
-    static let sessionKey = "ww.usersession"
-    
-    struct Model {
-        var token: String?
-        var timeToLive: Int?
-        var uid: Int?
-        
-        init(_ json: [String: Any]) {
-            if let _token = json["token"] as? String {
-                self.token = _token
-            }
-            
-            if let _ttl = json["timeToLive"] as? Int {
-                self.timeToLive = _ttl
-            }
-            
-            if let _userId = json["uid"] as? Int {
-                self.uid = _userId
-            }
-        }
+    static var saveUser = { (user: User) in
+        UserDefaults.standard.set(user.token, forKey: DefaultKeys.WW_SESSION_USER_TOKEN.rawValue)
+        UserDefaults.standard.set(user.time_to_live, forKey: DefaultKeys.WW_SESSION_USER_TTL.rawValue)
+        UserDefaults.standard.set(user.userId, forKey: DefaultKeys.WW_SESSION_USER_UID.rawValue)
     }
-    
-    static var saveUser = { (token: String, timeToLive: Int, userId: Int) in
-        UserDefaults.standard.set([access_token: token, ttl: timeToLive, uid: userId], forKey: sessionKey)
-    }
-    
-    static var getToken = { _ -> Model in
-        return Model((UserDefaults.standard.value(forKey: sessionKey) as? [String: Any]) ?? [:])
-    }(())
     
     static func clearUserSession() {
-        UserDefaults.standard.removeObject(forKey: sessionKey)
+        UserDefaults.standard.removeObject(forKey: DefaultKeys.WW_SESSION_USER_TOKEN.rawValue)
+        UserDefaults.standard.removeObject(forKey: DefaultKeys.WW_SESSION_USER_TTL.rawValue)
+        UserDefaults.standard.removeObject(forKey: DefaultKeys.WW_SESSION_USER_UID.rawValue)
     }
     
 }

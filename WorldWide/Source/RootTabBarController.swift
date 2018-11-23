@@ -9,9 +9,9 @@
 import UIKit
 import AsyncDisplayKit
 
-class RootTabBarController: ASTabBarController {
+class RootTabBarController: ASViewController<ASDisplayNode> {
 
-    private var googleTab: ASNavigationController = {
+    private lazy var googleTab: ASNavigationController = {
         let tab = ASNavigationController(rootViewController: GoogleViewController())
         tab.tabBarItem.title = nil
         tab.tabBarItem.image = #imageLiteral(resourceName: "icn_tabbar_news")
@@ -20,7 +20,7 @@ class RootTabBarController: ASTabBarController {
         return tab
     }()
     
-    private var newTab: ASNavigationController = {
+    private lazy var newTab: ASNavigationController = {
         let tab = ASNavigationController(rootViewController: SearchViewController())
         tab.tabBarItem.title = nil
         tab.tabBarItem.image = #imageLiteral(resourceName: "icn_tabbar_sources")
@@ -28,7 +28,7 @@ class RootTabBarController: ASTabBarController {
         return tab
     }()
     
-    private var sourceTab: ASNavigationController = {
+    private lazy var sourceTab: ASNavigationController = {
         let tab = ASNavigationController(rootViewController: SourcesViewController())
         tab.tabBarItem.title = nil
         tab.tabBarItem.image = #imageLiteral(resourceName: "icn_tabbar_search")
@@ -38,10 +38,30 @@ class RootTabBarController: ASTabBarController {
     
     init() {
         super.init(nibName: nil, bundle: nil)
-        
-        self.viewControllers = [self.googleTab, self.newTab, self.sourceTab]
-        self.selectedIndex = 0
-        self.tabBar.tintColor = UIColor.red
+        // init view
+        let splashViewController = SplashViewController()
+        splashViewController.view.frame = view.frame
+        self.view.addSubnode(splashViewController.node)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        if let _ = UserDefaults.init().string(forKey: DefaultKeys.WW_SESSION_USER_TOKEN.rawValue) {
+            UIApplication.shared.keyWindow?.setRootViewController(self.switchToHome(),
+                                                                  options: UIWindow.TransitionOptions(direction: UIWindow.TransitionOptions.Direction.fade,
+                                                                                                      style: UIWindow.TransitionOptions.Curve.linear))
+        } else {
+            let loginVC = LoginViewController()
+            loginVC.view.frame = view.frame
+            self.view.addSubnode(loginVC.scrollNode)
+        }
+    }
+    
+    func switchToHome() -> UIViewController {
+        let tabbar = ASTabBarController()
+        tabbar.viewControllers = [self.googleTab, self.newTab, self.sourceTab]
+        tabbar.selectedIndex = 0
+        tabbar.tabBar.tintColor = UIColor.red
+        return tabbar
     }
     
     required init?(coder aDecoder: NSCoder) {

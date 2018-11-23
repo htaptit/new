@@ -14,10 +14,7 @@ class LogoAreaDisplay: ASDisplayNode {
         let node = ASNetworkImageNode()
         node.style.preferredSize = CGSize(width: 60, height: 60)
         node.backgroundColor = UIColor.white
-        node.cornerRadius = 30
-        node.borderWidth = 5.0
-        node.borderColor = UIColor(hexString: "#5d5e72").cgColor
-        node.image = UIImage(named: "ic_face")
+        node.image = UIImage(named: "ic_supervisor_account")
         
         return node
     }()

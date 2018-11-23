@@ -11,11 +11,11 @@ import Moya
 
 enum WWAPI {
     // newsapi
-    case top_headlines(query: String?, sources: [NewsSource]?, domains: [NewsSource]?, from: String?, to: String?, language: String?, sortBy: String?, pageSize: Int?, page: Int?)
+    case top_headlines(query: String?, sources: [String]?, domains: [String]?, from: String?, to: String?, language: String?, sortBy: String?, pageSize: Int?, page: Int?)
     case gheadline(country: String?, page: Int?)
     
     // mineapi
-    case everything(query: String?, sources: [NewsSource]?, domains: [NewsSource]?, from: String?, to: String?, language: String?, sortBy: String?, pageSize: Int?, page: Int?)
+    case everything(query: String?, sources: [String]?, domains: [String]?, from: String?, to: String?, language: String?, sortBy: String?, pageSize: Int?, page: Int?)
     case get_asources()
     case signin(username: String?, passwd: String?)
     case earticles(sids: [Int], offset: Int)
@@ -81,8 +81,8 @@ extension WWAPI : TargetType {
         switch self {
         case .top_headlines(let query, let sources, let domains, let from, let to, let language, let sortBy, let pageSize, let page):
             if let _ = query { params["q"] = query! }
-            if let _ = sources { params["sources"] = sources!.compactMap( { $0.string } ).joined(separator: ",") }
-            if let _ = domains { params["domains"] = domains!.compactMap( { $0.shortDomain } ).joined(separator: ",") }
+            if let _ = sources { params["sources"] = sources!.compactMap( { $0 } ).joined(separator: ",") }
+            if let _ = domains { params["domains"] = domains!.compactMap( { $0 } ).joined(separator: ",") }
             if let _ = from { params["from"] = from! }
             if let _ = to { params["to"] = to! }
             if let _ = language { params["language"] = language! }
@@ -93,8 +93,8 @@ extension WWAPI : TargetType {
             
         case .everything(let query, let sources, let domains, let from, let to, let language, let sortBy, let pageSize, let page):
             if let _ = query { params["q"] = query! }
-            if let _ = sources { params["sources"] = sources!.compactMap( { $0.string } ).joined(separator: ",") }
-            if let _ = domains { params["domains"] = domains!.compactMap( { $0.shortDomain } ).joined(separator: ",") }
+            if let _ = sources { params["sources"] = sources!.compactMap( { $0 } ).joined(separator: ",") }
+            if let _ = domains { params["domains"] = domains!.compactMap( { $0 } ).joined(separator: ",") }
             if let _ = from { params["from"] = from! }
             if let _ = to { params["to"] = to! }
             if let _ = language { params["language"] = language! }
@@ -159,7 +159,7 @@ extension WWAPI : TargetType {
             // account: hoang.tronganh@icloud.com
             return ["X-Api-Key" : "2c297d7fb6b940ff9eb0e53651ad8997"]
         default:
-            return ["Authorization": UserCurrent.getToken.token ?? ""]
+            return ["Authorization": UserDefaults().string(forKey: DefaultKeys.WW_SESSION_USER_TOKEN.rawValue) ?? ""]
         }
     }
     

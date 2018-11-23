@@ -9,12 +9,14 @@
 import UIKit
 import AsyncDisplayKit
 import RxSwift
+import RxCocoa
 
 class LoginViewController: ASViewController<ASScrollNode> {
     let scrollNode = ASScrollNode()
     
     private let bag = DisposeBag()
     
+     private let bag1 = DisposeBag()
     private let logoArea: LogoAreaDisplay = {
         let node = LogoAreaDisplay()
         return node
@@ -32,12 +34,6 @@ class LoginViewController: ASViewController<ASScrollNode> {
         
         super.init(node: scrollNode)
         
-        guard let statusBarView = UIApplication.shared.value(forKeyPath: "statusBarWindow.statusBar") as? UIView else {
-            return
-        }
-        
-        statusBarView.backgroundColor = UIColor(hexString: "#5d5e72")
-        
         scrollNode.layoutSpecBlock = { node, constrainedSize in
             let from = ASCenterLayoutSpec(centeringOptions: .XY, sizingOptions: [], child: self.FromArea)
             from.style.layoutPosition.y = UIScreen.main.bounds.height / 4 + 40.0
@@ -49,10 +45,18 @@ class LoginViewController: ASViewController<ASScrollNode> {
             
             return ab
         }
-        
-        scrollNode.backgroundColor = UIColor(hexString: "#5d5e72")
+        scrollNode.backgroundColor = UIColor.white
         
         FromArea.signinProtocol = self
+        
+        UserDefaults.standard.rx
+            .observe(String.self, DefaultKeys.WW_SESSION_USER_TOKEN.rawValue)
+            .subscribe(onNext: { (value) in
+                if let _ = value {
+                    UIApplication.shared.keyWindow?.setRootViewController(AppDelegate.shared.rootViewController.switchToHome(), options: UIWindow.TransitionOptions(direction: UIWindow.TransitionOptions.Direction.toBottom, style: UIWindow.TransitionOptions.Curve.linear))
+                }
+            })
+            .disposed(by: bag1)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -64,12 +68,13 @@ class LoginViewController: ASViewController<ASScrollNode> {
         self.navigationItem.title = "Login"
         self.navigationController?.navigationBar.isTranslucent = false
     }
-    
+
 }
 
 extension LoginViewController: SigninProtocol {
     func signin(username: String?, password: String?) {
         let _ = UserCurrent.clearUserSession()
+
         guard let name = username, let passw = password else {
             self.view.endEditing(true)
             return
@@ -77,7 +82,7 @@ extension LoginViewController: SigninProtocol {
 
         WWService.signin(username: name, password: passw)
             .subscribe(onNext: { (user) in
-                UserCurrent.saveUser(user.token, user.time_to_live, user.userId)
+                UserCurrent.saveUser(user)
             }, onError: { (error) in
                 debugPrint("##### Error \(error)######")
             }, onCompleted: {
@@ -85,5 +90,8 @@ extension LoginViewController: SigninProtocol {
             }) {
                 debugPrint("##### Login success ######")
         }.disposed(by: bag)
+        
+        
+        
     }
 }

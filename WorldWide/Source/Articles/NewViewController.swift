@@ -11,12 +11,16 @@ import AsyncDisplayKit
 
 class NewViewController: ASViewController<ASTableNode> {
     
+    private var types: Type?
+    
     private var numberOfSection: Int = 15
     
     private var state: CellState = .collapsed
     
-    init() {
+    init(types: Type?) {
         super.init(node: ASTableNode())
+        
+        self.types = types
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -56,7 +60,7 @@ class NewViewController: ASViewController<ASTableNode> {
 
 extension NewViewController: ASTableDataSource, ASTableDelegate {
     func numberOfSections(in tableNode: ASTableNode) -> Int {
-        return self.numberOfSection
+        return self.types?.sources?.count ?? 0
     }
     
     func tableNode(_ tableNode: ASTableNode, numberOfRowsInSection section: Int) -> Int {
@@ -69,7 +73,7 @@ extension NewViewController: ASTableDataSource, ASTableDelegate {
     func tableNode(_ tableNode: ASTableNode, nodeBlockForRowAt indexPath: IndexPath) -> ASCellNodeBlock {
         if indexPath.row == 0 {
             let nodeBlock: ASCellNodeBlock = {
-                return BaseCell()
+                return BaseCell(source: self.types?.sources?[indexPath.section])
             }
             
             return nodeBlock

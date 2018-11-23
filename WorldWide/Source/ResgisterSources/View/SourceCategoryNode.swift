@@ -32,13 +32,8 @@ class SourceCategoryNode: ASCellNode {
             return
         }
         
-        if #available(iOS 11.0, *) {
-            self.photoNode.backgroundColor = UIColor(named: "\(name)")
-        } else {
-            // Fallback on earlier versions
-        }
-        
-        self.nameNode.attributedText = NSAttributedString(string: name)
+        self.photoNode.url = tp.image
+        self.nameNode.attributedText = NSAttributedString(string: name, attributes: [NSAttributedStringKey.font : UIFont.systemFont(ofSize: 10.0, weight: .bold),  NSAttributedStringKey.foregroundColor: UIColor.white])
     }
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {

@@ -129,30 +129,37 @@ extension SearchViewController: ASTableDataSource, ASTableDelegate {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 25.0))
-
+        let rHeader = UIView()
+        let headerView = UIView(frame: CGRect(x: 5, y: 5, width: view.frame.size.width - 20, height: 20.0))
+        
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 12.0, weight: .thin)
+        
+        let imageV = UIImageView()
+        imageV.translatesAutoresizingMaskIntoConstraints = false
+        
         
         switch section {
         case 0:
             label.text =  "History"
             label.textColor = UIColor(hexString: "#325d79")
+            imageV.image = UIImage(named: "ic_history")
+            headerView.backgroundColor = UIColor(hexString: "#e84b3a", alpha: 0.2)
         case 1:
             label.text =  "Most searched"
             label.textColor = UIColor(hexString: "#f26627")
+            imageV.image = UIImage(named: "ic_trending_up")
+            headerView.backgroundColor = UIColor(hexString: "#2980b9", alpha: 0.2)
         default:
             label.text =  "Top Headline"
             label.textColor = UIColor(hexString: "#ee4540")
+            imageV.image = UIImage(named: "ic_star")
+            headerView.backgroundColor = UIColor(hexString: "#d1404a", alpha: 0.2)
         }
         
         label.font = UIFont.boldSystemFont(ofSize: 12.0)
-        
-        let imageV = UIImageView()
-        imageV.translatesAutoresizingMaskIntoConstraints = false
-        imageV.image = #imageLiteral(resourceName: "icn_added")
-        
+
         headerView.addSubview(imageV)
         headerView.addSubview(label)
         
@@ -166,7 +173,10 @@ extension SearchViewController: ASTableDataSource, ASTableDelegate {
         label.centerYAnchor.constraint(equalTo: headerView.centerYAnchor).isActive = true
         label.heightAnchor.constraint(equalToConstant: 25).isActive = true
 
-        return headerView
+        headerView.layer.cornerRadius = 10.0
+        rHeader.addSubview(headerView)
+        
+        return rHeader
         
     }
     
