@@ -11,7 +11,7 @@ import AsyncDisplayKit
 
 class SplashViewController: ASViewController<ASDisplayNode> {
     
-    private let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+    private let activityIndicator = UIActivityIndicatorView(style: .whiteLarge)
     
     init() {
         super.init(node: ASDisplayNode())

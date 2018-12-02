@@ -50,19 +50,19 @@ class HistoryNode: ASCellNode {
         self.imageNode.url = article.urlToImage
 
         self.titleNode = ASTextNode()
-        let title = NSAttributedString(string: article.title ?? "", attributes: [NSAttributedStringKey.foregroundColor: UIColor.black, NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14)])
+        let title = NSAttributedString(string: article.title ?? "", attributes: [NSAttributedString.Key.foregroundColor: UIColor.black, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)])
         self.titleNode.attributedText = title
         
         self.subtitleNode = ASTextNode()
-        let subtitle = NSAttributedString(string: article.description ?? "", attributes: [NSAttributedStringKey.foregroundColor: UIColor.black, NSAttributedStringKey.font: UIFont.systemFont(ofSize: 12)])
+        let subtitle = NSAttributedString(string: article.description ?? "", attributes: [NSAttributedString.Key.foregroundColor: UIColor.black, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12)])
         self.subtitleNode.attributedText = subtitle
         
-        let authText = NSAttributedString(string: article.author ?? article.sourcename, attributes: [NSAttributedStringKey.foregroundColor : UIColor.darkGray, NSAttributedStringKey.font: UIFont.systemFont(ofSize: 9)])
+        let authText = NSAttributedString(string: article.author ?? article.sourcename, attributes: [NSAttributedString.Key.foregroundColor : UIColor.darkGray, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 9)])
         self.auth.attributedText = authText
         
         self.created_at = ASTextNode()
         if let publishedAt = article.publishedAt {
-            let createdAtText = NSAttributedString(string: UnboxDateFormater.date(format: "MMM dd, H:m").string(from: publishedAt), attributes: [NSAttributedStringKey.foregroundColor : UIColor.darkGray, NSAttributedStringKey.font: UIFont.systemFont(ofSize: 9)])
+            let createdAtText = NSAttributedString(string: UnboxDateFormater.date(format: "MMM dd, H:m").string(from: publishedAt), attributes: [NSAttributedString.Key.foregroundColor : UIColor.darkGray, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 9)])
             self.created_at.attributedText = createdAtText
         }
         

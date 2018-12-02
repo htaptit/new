@@ -79,9 +79,9 @@ class FormLoginDisplay: ASDisplayNode {
         
         let title = NSAttributedString(string: "Signup",
                                        attributes: [
-                                        NSAttributedStringKey.foregroundColor: UIColor(hexString: "#27ae60"),
-                                        NSAttributedStringKey.font: UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.semibold),
-                                        NSAttributedStringKey.underlineStyle : NSUnderlineStyle.styleSingle.rawValue])
+                                        NSAttributedString.Key.foregroundColor: UIColor(hexString: "#27ae60"),
+                                        NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.semibold),
+                                        NSAttributedString.Key.underlineStyle : NSUnderlineStyle.single.rawValue])
         node.attributedText = title
         node.maximumNumberOfLines = 1
         
@@ -95,9 +95,9 @@ class FormLoginDisplay: ASDisplayNode {
         let node = ASTextNode()
         let title = NSAttributedString(string: "Forgot password ?",
                                        attributes: [
-                                        NSAttributedStringKey.foregroundColor: UIColor(hexString: "#27ae60"),
-                                        NSAttributedStringKey.font: UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.semibold),
-                                        NSAttributedStringKey.underlineStyle : NSUnderlineStyle.styleSingle.rawValue])
+                                        NSAttributedString.Key.foregroundColor: UIColor(hexString: "#27ae60"),
+                                        NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.semibold),
+                                        NSAttributedString.Key.underlineStyle : NSUnderlineStyle.single.rawValue])
         
         node.attributedText = title
         node.maximumNumberOfLines = 1

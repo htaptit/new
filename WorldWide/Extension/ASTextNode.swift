@@ -15,9 +15,9 @@ extension ASTextNode {
         paragraphStyle.alignment = NSTextAlignment.center
         paragraphStyle.lineBreakMode = NSLineBreakMode.byWordWrapping
         
-        self.attributedText = NSAttributedString(string: text, attributes: [NSAttributedStringKey.foregroundColor : UIColor(hexString: "#35a512"),
-                                                                            NSAttributedStringKey.paragraphStyle: paragraphStyle,
-                                                                            NSAttributedStringKey.font: UIFont.systemFont(ofSize: 14.0)])
+        self.attributedText = NSAttributedString(string: text, attributes: [NSAttributedString.Key.foregroundColor : UIColor(hexString: "#35a512"),
+                                                                            NSAttributedString.Key.paragraphStyle: paragraphStyle,
+                                                                            NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14.0)])
         self.style.preferredSize = CGSize(width: UIScreen.main.bounds.width - WebConstants.ADDRESSBAR.SPACING_ITEMS * 4 - WebConstants.ADDRESSBAR.SIZE_BUTTONS.width * 4,
                                           height: WebConstants.ADDRESSBAR.HEIGTH)
         self.textContainerInset.top = topPading

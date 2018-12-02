@@ -84,11 +84,11 @@ extension LoginViewController: SigninProtocol {
             .subscribe(onNext: { (user) in
                 UserCurrent.saveUser(user)
             }, onError: { (error) in
-                debugPrint("##### Error \(error)######")
+//                debugPrint("##### Error \(error)######")
             }, onCompleted: {
                 debugPrint("##### Login success ######")
             }) {
-                debugPrint("##### Login success ######")
+//                debugPrint("##### Login success ######")
         }.disposed(by: bag)
         
         

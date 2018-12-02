@@ -21,4 +21,8 @@ struct WebConstants {
         
         static let SIZE_BUTTONS: CGSize = CGSize(width: 35.0, height: 35.0)
     }
+    
+    struct TABBAR {
+        static let ICON_INSET = UIEdgeInsets(top: 6, left: 0, bottom: -6, right: 0)
+    }
 }

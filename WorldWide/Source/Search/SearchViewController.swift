@@ -49,7 +49,7 @@ class SearchViewController: ASViewController<ASTableNode> {
         
         searchBar.delegate = self
         
-        let attributes = [NSAttributedStringKey.foregroundColor : UIColor.red]
+        let attributes = [NSAttributedString.Key.foregroundColor : UIColor.red]
         UIBarButtonItem.appearance(whenContainedInInstancesOf: [UISearchBar.self]).setTitleTextAttributes(attributes, for: .normal)
         
         navigationItem.titleView = searchBar

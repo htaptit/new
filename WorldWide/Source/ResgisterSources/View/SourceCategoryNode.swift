@@ -33,7 +33,7 @@ class SourceCategoryNode: ASCellNode {
         }
         
         self.photoNode.url = tp.image
-        self.nameNode.attributedText = NSAttributedString(string: name, attributes: [NSAttributedStringKey.font : UIFont.systemFont(ofSize: 10.0, weight: .bold),  NSAttributedStringKey.foregroundColor: UIColor.white])
+        self.nameNode.attributedText = NSAttributedString(string: name, attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 10.0, weight: .bold),  NSAttributedString.Key.foregroundColor: UIColor.white])
     }
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {

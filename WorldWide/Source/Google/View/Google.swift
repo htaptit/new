@@ -50,19 +50,19 @@ class Google: ASCellNode {
         self.favoriteImageNode.url = article.fav_icon_url
         
         self.titleNode = ASTextNode()
-        let title = NSAttributedString(string: article.title ?? "", attributes: [NSAttributedStringKey.foregroundColor: UIColor.black, NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 14)])
+        let title = NSAttributedString(string: article.title ?? "", attributes: [NSAttributedString.Key.foregroundColor: UIColor.black, NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)])
         self.titleNode.attributedText = title
         
         self.subtitleNode = ASTextNode()
-        let subtitle = NSAttributedString(string: article.description ?? "", attributes: [NSAttributedStringKey.foregroundColor: UIColor.black, NSAttributedStringKey.font: UIFont.systemFont(ofSize: 12)])
+        let subtitle = NSAttributedString(string: article.description ?? "", attributes: [NSAttributedString.Key.foregroundColor: UIColor.black, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 12)])
         self.subtitleNode.attributedText = subtitle
         
-        let authText = NSAttributedString(string: article.author ?? article.sourcename, attributes: [NSAttributedStringKey.foregroundColor : UIColor.darkGray, NSAttributedStringKey.font: UIFont.systemFont(ofSize: 9)])
+        let authText = NSAttributedString(string: article.author ?? article.sourcename, attributes: [NSAttributedString.Key.foregroundColor : UIColor.darkGray, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 9)])
         self.auth.attributedText = authText
         
         self.created_at = ASTextNode()
         if let publishedAt = article.publishedAt {
-            let createdAtText = NSAttributedString(string: UnboxDateFormater.date(format: "MMM dd, HH:mm").string(from: publishedAt), attributes: [NSAttributedStringKey.foregroundColor : UIColor.darkGray, NSAttributedStringKey.font: UIFont.systemFont(ofSize: 9)])
+            let createdAtText = NSAttributedString(string: UnboxDateFormater.date(format: "MMM dd, HH:mm").string(from: publishedAt), attributes: [NSAttributedString.Key.foregroundColor : UIColor.darkGray, NSAttributedString.Key.font: UIFont.systemFont(ofSize: 9)])
             self.created_at.attributedText = createdAtText
         }
         
@@ -102,7 +102,6 @@ class Google: ASCellNode {
         parentVertical.alignItems = .stretch
         
         parentVertical.children = [ASInsetLayoutSpec(insets: insetImageNodeStack, child: topStack),
-//                                   ASInsetLayoutSpec(insets: UIEdgeInsets(top: 5.0, left: 5.0, bottom: 10.0, right: 5.0), child: titlesStack),
                                    ASInsetLayoutSpec(insets: UIEdgeInsets(top: 5.0, left: 5.0, bottom: 5.0, right: 5.0), child: parentInfoStack)]
         
         return ASInsetLayoutSpec(insets: insetImageNodeStack, child: parentVertical)

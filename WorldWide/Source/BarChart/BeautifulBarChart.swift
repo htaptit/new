@@ -170,8 +170,8 @@ class BeautifulBarChart: ASDisplayNode {
             textLayer.frame = CGRect(x: xPos, y: yPos, width: self.topBubbleRadius*2, height: 22)
             textLayer.foregroundColor = UIColor.white.cgColor
             textLayer.backgroundColor = UIColor.clear.cgColor
-            textLayer.alignmentMode = kCAAlignmentCenter
-            textLayer.truncationMode = kCATruncationEnd
+            textLayer.alignmentMode = CATextLayerAlignmentMode.center
+            textLayer.truncationMode = CATextLayerTruncationMode.end
             textLayer.contentsScale = UIScreen.main.scale
             textLayer.font = CTFontCreateWithName(UIFont.systemFont(ofSize: 0).fontName as CFString, 0, nil)
             textLayer.fontSize = 14
@@ -189,8 +189,8 @@ class BeautifulBarChart: ASDisplayNode {
             textLayer.frame = CGRect(x: xPos, y: yPos, width: self.barWidth, height: 22)
             textLayer.foregroundColor = color.cgColor
             textLayer.backgroundColor = UIColor.clear.cgColor
-            textLayer.alignmentMode = kCAAlignmentCenter
-            textLayer.truncationMode = kCATruncationEnd
+            textLayer.alignmentMode = CATextLayerAlignmentMode.center
+            textLayer.truncationMode = CATextLayerTruncationMode.end
             textLayer.contentsScale = UIScreen.main.scale
             textLayer.font = CTFontCreateWithName(UIFont.systemFont(ofSize: 0).fontName as CFString, 0, nil)
             textLayer.fontSize = 14

@@ -81,20 +81,20 @@ class BaseCell: ASCellNode {
     
     private let sidText: ASTextNode = {
         let node = ASTextNode()
-        node.attributedText = NSAttributedString(string: "", attributes: [NSAttributedStringKey.font : UIFont.systemFont(ofSize: 10.0, weight: UIFont.Weight.regular)])
+        node.attributedText = NSAttributedString(string: "", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 10.0, weight: UIFont.Weight.regular)])
         
         return node
     }()
     
     private let snameText: ASTextNode = {
         let node = ASTextNode()
-        node.attributedText = NSAttributedString(string: "", attributes: [NSAttributedStringKey.font : UIFont.systemFont(ofSize: 12.0, weight: UIFont.Weight.bold)])
+        node.attributedText = NSAttributedString(string: "", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 12.0, weight: UIFont.Weight.bold)])
         return node
     }()
     
     private let languageText: ASTextNode = {
         let node = ASTextNode()
-        node.attributedText = NSAttributedString(string: "en", attributes: [NSAttributedStringKey.font : UIFont.systemFont(ofSize: 10.0, weight: UIFont.Weight.regular)])
+        node.attributedText = NSAttributedString(string: "en", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 10.0, weight: UIFont.Weight.regular)])
         return node
     }()
     
@@ -109,13 +109,13 @@ class BaseCell: ASCellNode {
     
     private let followedCount: ASTextNode = {
         let node = ASTextNode()
-        node.attributedText = NSAttributedString(string: "\(Int.random(in: 0 ..< 150))", attributes: [NSAttributedStringKey.font : UIFont.systemFont(ofSize: 12.0, weight: UIFont.Weight.semibold)])
+        node.attributedText = NSAttributedString(string: "\(Int.random(in: 0 ..< 150))", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 12.0, weight: UIFont.Weight.semibold)])
         return node
     }()
     
     private let followedsText: ASTextNode = {
         let node = ASTextNode()
-        node.attributedText = NSAttributedString(string: "Followeds", attributes: [NSAttributedStringKey.font : UIFont.systemFont(ofSize: 12.0, weight: UIFont.Weight.bold)])
+        node.attributedText = NSAttributedString(string: "Followeds", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 12.0, weight: UIFont.Weight.bold)])
         return node
     }()
     
@@ -169,8 +169,8 @@ class BaseCell: ASCellNode {
         super.init()
         
         self.baseImage.url = source?.fav_icon_url
-        self.sidText.attributedText = NSAttributedString(string: source?.sid ?? "", attributes: [NSAttributedStringKey.font : UIFont.systemFont(ofSize: 10.0, weight: UIFont.Weight.regular)])
-        self.snameText.attributedText = NSAttributedString(string: source?.sname ?? "", attributes: [NSAttributedStringKey.font : UIFont.systemFont(ofSize: 11.0, weight: UIFont.Weight.bold)])
+        self.sidText.attributedText = NSAttributedString(string: source?.sid ?? "", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 10.0, weight: UIFont.Weight.regular)])
+        self.snameText.attributedText = NSAttributedString(string: source?.sname ?? "", attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 11.0, weight: UIFont.Weight.bold)])
         
         automaticallyManagesSubnodes = true
         selectionStyle = .none

@@ -35,7 +35,7 @@ class GoogleViewController: ASViewController<ASTableNode> {
         
         self.refreshControl.tintColor = UIColor.red
         self.refreshControl.attributedTitle = NSAttributedString(string: "Fetching New Articles ...")
-        self.refreshControl.addTarget(self, action: #selector(self.refreshWeatherData(_:)), for: UIControlEvents.valueChanged)
+        self.refreshControl.addTarget(self, action: #selector(self.refreshWeatherData(_:)), for: UIControl.Event.valueChanged)
         node.view.refreshControl = self.refreshControl
     }
     

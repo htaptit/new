@@ -33,7 +33,7 @@ extension WWAPI : TargetType {
             
             return url
         default:
-            guard let url = URL(string: "http://192.168.0.252:3000/api") else {
+            guard let url = URL(string: "http://localhost:3000/api") else {
                 fatalError("base url could not be configured.")
             }
             
