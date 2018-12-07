@@ -36,15 +36,32 @@ class BaseService {
                             throw ResponseError.invaildJSONFormat
                         }
                     case .failure(let error):
-                        debugPrint("One: \(error.response)")
                         throw error
                     }
                 } catch let error {
                     if let e = error as? MoyaError {
-                        debugPrint(e.response?.statusCode)
+                        do {
+                            let errorJson = try e.response?.mapJSON()
+                            
+                            if let errorJsonDict = errorJson as? [String: Any] {
+                                let _error = APIError(JSON: errorJsonDict)
+                                
+                                observer.onError(NSError(domain: "", code: _error?.statusCode ?? 0, userInfo: [NSLocalizedDescriptionKey: _error?.message ?? "Unknown"]))
+                                observer.onCompleted()
+                            }
+                        } catch {
+                            observer.onError(error)
+                            observer.onCompleted()
+                        }
                     }
- 
-                    observer.onError(error)
+                    
+                    if let _ = error as? ResponseError {
+                        observer.onError(ResponseError.invaildJSONFormat)
+                        observer.onCompleted()
+                    }
+                    
+                    debugPrint(String(describing: error))
+                    observer.onError(ResponseError.invaildJSONFormat)
                     observer.onCompleted()
                 }
             })

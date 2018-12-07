@@ -7,7 +7,7 @@
 //
 import Foundation
 import Moya
-//import Alamofire
+import Alamofire
 
 enum WWAPI {
     // newsapi
@@ -33,7 +33,7 @@ extension WWAPI : TargetType {
             
             return url
         default:
-            guard let url = URL(string: "http://localhost:3000/api") else {
+            guard let url = URL(string: "http://192.168.0.252:3000/api") else {
                 fatalError("base url could not be configured.")
             }
             
@@ -151,16 +151,9 @@ extension WWAPI : TargetType {
         return CompositeEncoding.default
     }
     
+    
     var headers: [String : String]? {
-        switch self {
-        case .top_headlines,
-             .gheadline:
-            // key by newsapi.org
-            // account: hoang.tronganh@icloud.com
-            return ["X-Api-Key" : "2c297d7fb6b940ff9eb0e53651ad8997"]
-        default:
-            return ["Authorization": UserDefaults().string(forKey: DefaultKeys.WW_SESSION_USER_TOKEN.rawValue) ?? ""]
-        }
+        return nil
     }
     
     var sampleData: Data {
@@ -185,8 +178,57 @@ extension WWAPI : TargetType {
     }
 }
 
+extension WWAPI: AccessTokenAuthorizable {
+    var authorizationType: AuthorizationType {
+        switch self {
+        case .signin:
+            return .none
+        default:
+            return .bearer
+        }
+    }
+}
+
 struct WWAPIAdap {
-    static let shared = MoyaProvider<WWAPI>()
+    static let shared = WWProvider<WWAPI>(endpointClosure: { (target: WWAPI) -> Endpoint in
+        let defaultEndpoint = MoyaProvider.defaultEndpointMapping(for: target)
+        
+        // Sign all non-authenticating requests
+        switch target {
+        case .signin:
+            return defaultEndpoint
+        case .top_headlines,
+             .gheadline:
+            return defaultEndpoint.adding(newHTTPHeaderFields: ["X-Api-Key": "2c297d7fb6b940ff9eb0e53651ad8997"])
+        default:
+            return defaultEndpoint.adding(newHTTPHeaderFields: ["Authorization": UserDefaults().string(forKey: DefaultKeys.WW_SESSION_USER_TOKEN.rawValue) ?? ""])
+        }
+    })
+}
+
+final class WWProvider<T: TargetType>: MoyaProvider<T> {
+    public init(endpointClosure: @escaping EndpointClosure,
+                stubClosure: @escaping StubClosure = MoyaProvider.neverStub,
+                callbackQueue: DispatchQueue? = nil,
+                plugins: [PluginType] = [NetworkLoggerPlugin(cURL: true)],
+                trackInflights: Bool = false) {
+        
+        // 设置Token验证 插件
+        let tokenClosure: () -> String = {
+            return UserDefaults().string(forKey: DefaultKeys.WW_SESSION_USER_TOKEN.rawValue) ?? ""
+        }
+        
+        let authPlugin = AccessTokenPlugin(tokenClosure: tokenClosure())
+        
+        let _plugins: [PluginType] = [authPlugin, plugins.first!]
+        
+        super.init(endpointClosure: endpointClosure,
+                   stubClosure: stubClosure,
+                   callbackQueue: callbackQueue,
+                   manager: DefaultAlamofireManager.sharedManager,
+                   plugins: _plugins,
+                   trackInflights: trackInflights)
+    }
 }
 
 

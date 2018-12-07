@@ -8,16 +8,16 @@
 import Foundation
 import Alamofire
 
-//class DefaultAlamofireManager: Alamofire.SessionManager {
-//    static let sharedManager: DefaultAlamofireManager = {
-//        let configuration = URLSessionConfiguration.default
-//        configuration.httpAdditionalHeaders = Alamofire.SessionManager.defaultHTTPHeaders
-//        configuration.timeoutIntervalForRequest = 15// as seconds, you can set your request timeout
-//        configuration.timeoutIntervalForResource = 8640 // as seconds, you can set your resource timeout
-//        configuration.requestCachePolicy = .useProtocolCachePolicy
-//        return DefaultAlamofireManager(configuration: configuration)
-//    }()
-//}
+class DefaultAlamofireManager: Alamofire.SessionManager {
+    static let sharedManager: DefaultAlamofireManager = {
+        let configuration = URLSessionConfiguration.default
+        configuration.httpAdditionalHeaders = Alamofire.SessionManager.defaultHTTPHeaders
+        configuration.timeoutIntervalForRequest = 30// as seconds, you can set your request timeout
+        configuration.timeoutIntervalForResource = 8640 // as seconds, you can set your resource timeout
+        configuration.requestCachePolicy = .useProtocolCachePolicy
+        return DefaultAlamofireManager(configuration: configuration)
+    }()
+}
 
 public struct CompositeEncoding: ParameterEncoding {
     

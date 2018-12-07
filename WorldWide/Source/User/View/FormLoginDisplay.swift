@@ -7,8 +7,14 @@
 //
 import UIKit
 import AsyncDisplayKit
+import RxCocoa
+import RxSwift
 
 class FormLoginDisplay: ASDisplayNode {
+    let viewModel = LoginViewModel()
+    let disposeBag = DisposeBag()
+    
+    
     var isForgetPassword: Bool = false
     
     var isSignup: Bool = false
@@ -125,6 +131,50 @@ class FormLoginDisplay: ASDisplayNode {
         forgotPassword.addTarget(self, action: #selector(forgotPassword(_:)), forControlEvents: .touchUpInside)
         signup.addTarget(self, action: #selector(signupAction(_:)), forControlEvents: .touchUpInside)
         down.addTarget(self, action: #selector(resetToLoginForm), forControlEvents: .touchUpInside)
+        
+        createViewModelBinding()
+        createCallbacks()
+    }
+    
+    func createViewModelBinding() {
+        username.textField.rx.text.orEmpty
+            .bind(to: viewModel.emailIdViewModel.data)
+            .disposed(by: disposeBag)
+        
+        password.textField.rx.text.orEmpty
+            .bind(to: viewModel.passwordViewModel.data)
+            .disposed(by: disposeBag)
+        
+        login.rx.tap.do(onNext: { [unowned self] in
+            self.username.resignFirstResponder()
+            self.password.resignFirstResponder()
+        })
+        .subscribe(onNext: { [unowned self] in
+            if self.viewModel.validateCredentials() {
+                self.viewModel.loginUser()
+            } else {
+                self.viewModel.alertValidateMessage()
+            }
+        }).disposed(by: disposeBag)
+        
+    }
+    
+    
+    
+    func createCallbacks (){
+        // success
+        viewModel.isSuccess.asObservable()
+            .bind{ value in
+                NSLog("Successfull")
+            }.disposed(by: disposeBag)
+        
+        // errors
+        viewModel.errorMsg.asObservable()
+            .bind { errorMessage in
+                // Show error
+                NSLog("Failure")
+            }.disposed(by: disposeBag)
+        
     }
     
     override func layoutSpecThatFits(_ constrainedSize: ASSizeRange) -> ASLayoutSpec {
@@ -175,7 +225,7 @@ class FormLoginDisplay: ASDisplayNode {
     
     @objc private func signin(_ sender: ASButtonNode) {
         sender.pulsate()
-        self.signinProtocol?.signin(username: self.username.textField.text, password: self.password.textField.text)
+//        self.signinProtocol?.signin(username: self.username.textField.text, password: self.password.textField.text)
     }
     
     @objc private func forgotPassword(_ sender: ASTextNode) {
